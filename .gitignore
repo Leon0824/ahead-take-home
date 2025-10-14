@@ -1,2 +1,4 @@
 .vagrant
 .pdm-python
+__pycache__/
+.env
