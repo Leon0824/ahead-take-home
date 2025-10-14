@@ -1,0 +1,31 @@
+# Start from the official Python base image.
+FROM public.ecr.aws/docker/library/python:3.12-slim
+
+# curl to perform health check
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the current working directory to /code.
+WORKDIR /code
+
+# Copy the file with the requirements to the /code directory.
+COPY ./requirements.txt /code/requirements.txt
+
+# Install the package dependencies in the requirements file.
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+# Copy the ./app directory inside the /code directory.
+COPY ./app /code/app
+
+# Log 會輸出到 stdout 和 stderr 給 Docker，也會以檔案形式存在容器內，但會隨容器更新而消滅。
+COPY ./logs /code/logs
+
+# 開放應用程式端口
+EXPOSE 80
+
+# Set the **command** to use fastapi run, which uses Uvicorn underneath.
+CMD ["python", "-m", "app", "--port", "80"]
+
+HEALTHCHECK CMD curl -f http://localhost/system/health || exit 1
