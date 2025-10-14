@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import uvicorn
 import uvicorn.config
 
-from app.logging import _level, boto3_logs_client, _retention_days
+from app.logging import _level
 from app.settings import get_settings
 
 
@@ -24,15 +24,6 @@ def main():
     logging_config = uvicorn.config.LOGGING_CONFIG
     logging_config['formatters']['default']['fmt'] = '%(asctime)s %(levelprefix)s %(message)s'
     logging_config['formatters']['access']['fmt'] = '%(asctime)s %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
-    
-    logging_config['handlers']['watchtower'] = {
-        'class': 'watchtower.CloudWatchLogHandler',
-        'log_group_name': _SETTINGS.ENVIRONMENT_MODE,
-        'log_stream_name': 'api-backend/uvicorn_logger',
-        'send_interval': 6,
-        'boto3_client': boto3_logs_client,
-        'log_group_retention_days': _retention_days,
-    }
     
     logging_config['loggers']['uvicorn']['handlers'] = ['default', 'watchtower']
     logging_config['loggers']['uvicorn']['level'] = _level
