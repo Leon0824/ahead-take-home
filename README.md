@@ -1,5 +1,6 @@
 # ahead-take-home
 
+
 ## 開發環境建置
 
 1. 安裝虛擬環境和套件管理工具 PDM。
@@ -64,6 +65,18 @@ INFO   Application startup complete.
 
 於 `fastapi dev` 模式下，專案資料夾內之檔案異動後 FastAPI 會自動重載，無需頻繁手動終止再運行。
 
+
+## 測試
+
+pytest 測試腳本位於 ./app/tests/，執行測試命令：
+
+```shell
+$ pdm run pytest
+```
+
+此命令會執行全部測試腳本，並輸出測試報告。
+
+
 ## 容器化運行
 
 1. 建構映像
@@ -95,6 +108,4 @@ ahead-take-home     development   674b6cdb2baf   1 hours ago   471MB
 ```shell
 $ docker compose up --detach
 ```
-
-## 測試
 

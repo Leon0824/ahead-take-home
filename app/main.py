@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from app.logging import logger
+from app.routers import router
 from app.settings import get_settings
 
 
@@ -81,3 +82,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         },
     })
     return await request_validation_exception_handler(request, exc)
+
+
+
+app.include_router(router)
