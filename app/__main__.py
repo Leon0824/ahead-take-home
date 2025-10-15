@@ -25,11 +25,11 @@ def main():
     logging_config['formatters']['default']['fmt'] = '%(asctime)s %(levelprefix)s %(message)s'
     logging_config['formatters']['access']['fmt'] = '%(asctime)s %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
     
-    logging_config['loggers']['uvicorn']['handlers'] = ['default', 'watchtower']
+    logging_config['loggers']['uvicorn']['handlers'] = ['default']
     logging_config['loggers']['uvicorn']['level'] = _level
     logging_config['loggers']['uvicorn.error']['level'] = _level
     
-    logging_config['loggers']['uvicorn.access']['handlers'] = ['access', 'watchtower']
+    logging_config['loggers']['uvicorn.access']['handlers'] = ['access']
     logging_config['loggers']['uvicorn.access']['level'] = _level
 
     parser = argparse.ArgumentParser()
