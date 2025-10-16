@@ -9,9 +9,12 @@ dependencies = [
     "pydantic-settings>=2.11.0",
     "loguru>=0.7.3",
     "pathvalidate>=3.3.1",
-    "boto3>=1.40.53",
+    "aiobotocore>=2.25.0",
+    "python-ulid>=3.1.0",
+    "alembic>=1.17.0",
+    "psycopg[binary]>=3.2.10",
 ]
-requires-python = "==3.12.*"
+requires-python = ">=3.12"
 readme = "README.md"
 license = "MIT"
 
@@ -21,7 +24,6 @@ dev = [
     "ipykernel>=7.0",
     "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
-    "boto3-stubs[s3]>=1.40.53",
 ]
 
 
