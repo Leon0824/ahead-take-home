@@ -1,7 +1,56 @@
+from datetime import UTC, datetime
+
+from pydantic import ConfigDict
 from sqlalchemy import MetaData, create_engine
-from sqlmodel import SQLModel, Session
+from sqlmodel import Field, Relationship, SQLModel, Session, func
 
 from app.settings import get_settings
+
+
+
+class UploadBatch(SQLModel, table=True):
+    __tablename__ = 'upload_batches'
+
+    id: int | None = Field(None, primary_key=True)
+    batch_idno: str = Field(unique=True)
+    upload_time: datetime
+
+    files: list['FcsFile'] = Relationship(
+        back_populates='upload_batch',
+        sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
+    )
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "batch_idno": "01K7PXGBTMV8R5M3TZTJ79PSMF",
+            'upload_time': "2025-10-16T18:00:00Z",
+            "files": [],
+        }],
+    })
+
+
+class FcsFile(SQLModel, table=True):
+    __tablename__ = 'fcs_files'
+
+    id: int | None = Field(None, primary_key=True)
+    file_idno: str = Field(unique=True)
+    file_name: str
+    file_size_byte: int
+
+    upload_batch_id: int = Field(foreign_key='upload_batches.id')
+    upload_batch: UploadBatch = Relationship(back_populates='files')
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "file_idno": "01K7Q22M2BEXAD9XZGT3JZV58V",
+            'file_name': "abc.fcs",
+            "file_size_byte": 12345,
+            "upload_batch_id": 1,
+        }],
+    })
+
 
 
 

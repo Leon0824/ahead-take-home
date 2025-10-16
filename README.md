@@ -72,7 +72,7 @@ INFO   Application startup complete.
 2. 根據需求修改 app/db.py。
 3. 執行 `pdm run alembic revision -m 'MESSAGE' --autogenerate`，產生異動腳本。
 4. 去 app/alembic/versions/ 找到剛出生的異動腳本，檢查視需要修正。
-5. 執行 `alembic upgrade head` 去真正修改資料庫 schema。
+5. 執行 `pdm run alembic upgrade head` 去真正修改資料庫 schema。
 
 
 ## 測試
