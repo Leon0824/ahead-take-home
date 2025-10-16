@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     BASE_URL: str
     ALLOW_ORIGINS: list[str]
 
+    DATABASE_URL: str
     REDIS_URL: RedisDsn
 
     ADMIN_EMAIL: EmailStr
@@ -33,6 +34,7 @@ class Settings(BaseSettings):
         'BASE_URL': 'https://api.wnc.net',
         'ALLOW_ORIGINS' : ['http://localhost:5173'],
 
+        'DATABASE_URL': 'sqlite:///database.db',
         'REDIS_URL': 'redis://redis-15500.c290.ap-northeast-1-2.ec2.redns.redis-cloud.com:15500',
 
         'ADMIN_USERNAME': 'admin',

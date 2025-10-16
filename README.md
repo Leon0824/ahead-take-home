@@ -7,6 +7,7 @@
 2. 安裝專案依賴套件。
 3. 設置 .env 檔案。
 4. 運行開發環境。
+5. 異動資料庫 schema。
 
 ### 安裝虛擬環境和套件管理工具 PDM
 
@@ -64,6 +65,14 @@ INFO   Application startup complete.
 - 按 CTRL+C 可終止程式。
 
 於 `fastapi dev` 模式下，專案資料夾內之檔案異動後 FastAPI 會自動重載，無需頻繁手動終止再運行。
+
+### 異動資料庫 schema
+
+1. 終止程式。
+2. 根據需求修改 app/db.py。
+3. 執行 `pdm run alembic revision -m 'MESSAGE' --autogenerate`，產生異動腳本。
+4. 去 app/alembic/versions/ 找到剛出生的異動腳本，檢查視需要修正。
+5. 執行 `alembic upgrade head` 去真正修改資料庫 schema。
 
 
 ## 測試
