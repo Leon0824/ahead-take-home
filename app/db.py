@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
 from pydantic import ConfigDict
-from sqlalchemy import MetaData, create_engine
+from sqlalchemy import TIMESTAMP, MetaData, create_engine, DATETIME
 from sqlmodel import Field, Relationship, SQLModel, Session, func
 
 from app.settings import get_settings
@@ -13,7 +13,7 @@ class UploadBatch(SQLModel, table=True):
 
     id: int | None = Field(None, primary_key=True)
     batch_idno: str = Field(unique=True)
-    upload_time: datetime
+    upload_time: datetime = Field(sa_type=TIMESTAMP(True))
 
     files: list['FcsFile'] = Relationship(
         back_populates='upload_batch',
