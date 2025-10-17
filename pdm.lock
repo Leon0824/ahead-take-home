@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:4c59979dbcb473bdfaff43d58affae098ec80879a5a5cb5bc7c67cecade40a5e"
+content_hash = "sha256:7cc4844ea2cddc424948b8048a676a36146349b34220d26783c8dadcc26b780c"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -888,6 +888,18 @@ marker = "python_version == \"3.12\""
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
+]
+
+[[package]]
+name = "mimesis"
+version = "18.0.0"
+requires_python = "<4.0,>=3.10"
+summary = "Mimesis: Fake Data Generator."
+groups = ["dev"]
+marker = "python_version == \"3.12\""
+files = [
+    {file = "mimesis-18.0.0-py3-none-any.whl", hash = "sha256:a51854a5ce63ebf2bd6a98e8841412e04cede38593be7e16d1d712848e6273df"},
+    {file = "mimesis-18.0.0.tar.gz", hash = "sha256:7d7c76ecd680ae48afe8dc4413ef1ef1ee7ef20e16f9f9cb42892add642fc1b2"},
 ]
 
 [[package]]
