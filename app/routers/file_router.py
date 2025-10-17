@@ -64,7 +64,7 @@ async def upload_fcs_files(
         try: validate_filename(f.filename)
         except ValidationError as e:
             logger.warning({'title': 'Invalid uploading filename', 'error': e, 'filename': f.filename})
-            raise HTTPException(status.HTTP_403_FORBIDDEN, f"File '{f.filename}' in invalid") from e
+            raise HTTPException(status.HTTP_403_FORBIDDEN, f"File name '{f.filename}' is invalid") from e
     
     batch = UploadBatch(batch_idno=str(ULID()), upload_time=datetime.now(UTC).replace(microsecond=0))
     tasks = []
