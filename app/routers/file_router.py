@@ -12,7 +12,7 @@ from ulid import ULID
 
 from app.db import FcsFile, UploadBatch, get_db_session
 from app.logging import logger
-from app.models import UploadBatchResult
+from app.models import FileInfo, UploadBatchResult
 from app.settings import get_settings
 
 
@@ -89,3 +89,17 @@ async def upload_fcs_files(
     response.files = batch.files
     response.failed_files = failed_files
     return response
+
+
+
+@router.get('/{file_idno}', operation_id='get_file_info')
+async def get_file_info(file_idno: str, db_session: Session = Depends(get_db_session)) -> FileInfo:
+    file = db_session.exec(select(FcsFile).where(FcsFile.file_idno == file_idno)).one_or_none()
+    if not file: raise HTTPException(status.HTTP_404_NOT_FOUND)
+
+    # Check if the file is private
+    ...
+
+    batch = file.upload_batch
+    info = FileInfo(file_idno=file.file_idno, file_name=file.file_name, file_size_byte=file.file_size_byte, upload_time=batch.upload_time)
+    return info
