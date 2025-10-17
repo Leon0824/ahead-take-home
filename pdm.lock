@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:7cc4844ea2cddc424948b8048a676a36146349b34220d26783c8dadcc26b780c"
+content_hash = "sha256:1730d032ab8d518c7311cfc4c9ef2d1e2ed514bc2041695305acc3882e2c3209"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -215,6 +215,21 @@ dependencies = [
 files = [
     {file = "botocore-1.40.49-py3-none-any.whl", hash = "sha256:bf1089d0e77e4fc2e195d81c519b194ab62a4d4dd3e7113ee4e2bf903b0b75ab"},
     {file = "botocore-1.40.49.tar.gz", hash = "sha256:fe8d4cbcc22de84c20190ae728c46b931bafeb40fce247010fb071c31b6532b5"},
+]
+
+[[package]]
+name = "botocore-stubs"
+version = "1.40.54"
+requires_python = ">=3.9"
+summary = "Type annotations and code completion for botocore"
+groups = ["dev"]
+marker = "python_version == \"3.12\""
+dependencies = [
+    "types-awscrt",
+]
+files = [
+    {file = "botocore_stubs-1.40.54-py3-none-any.whl", hash = "sha256:997e6f1c03e079c244caedf315f7a515a07480af9f93f53535e506f17cdbe880"},
+    {file = "botocore_stubs-1.40.54.tar.gz", hash = "sha256:fb38a794ab2b896f9cc237ec725546746accaffd34f382475a8d1b98ca1078e1"},
 ]
 
 [[package]]
@@ -1657,6 +1672,66 @@ dependencies = [
 files = [
     {file = "typer-0.19.2-py3-none-any.whl", hash = "sha256:755e7e19670ffad8283db353267cb81ef252f595aa6834a0d1ca9312d9326cb9"},
     {file = "typer-0.19.2.tar.gz", hash = "sha256:9ad824308ded0ad06cc716434705f691d4ee0bfd0fb081839d2e426860e7fdca"},
+]
+
+[[package]]
+name = "types-aiobotocore"
+version = "2.25.0"
+requires_python = ">=3.8"
+summary = "Type annotations for aiobotocore 2.25.0 generated with mypy-boto3-builder 8.11.0"
+groups = ["dev"]
+marker = "python_version == \"3.12\""
+dependencies = [
+    "botocore-stubs",
+    "typing-extensions>=4.1.0; python_version < \"3.12\"",
+]
+files = [
+    {file = "types_aiobotocore-2.25.0-py3-none-any.whl", hash = "sha256:7a9efa7e8240774546b95ae0db3b6f7cbf9f05c89db317612ec1d678649a88ff"},
+    {file = "types_aiobotocore-2.25.0.tar.gz", hash = "sha256:7e5e96568935d5255095b5f8aaedc0c1b265770a260a2ab6ed7d4c7ea7fe8228"},
+]
+
+[[package]]
+name = "types-aiobotocore-s3"
+version = "2.25.0"
+requires_python = ">=3.8"
+summary = "Type annotations for aiobotocore S3 2.25.0 service generated with mypy-boto3-builder 8.11.0"
+groups = ["dev"]
+marker = "python_version == \"3.12\""
+dependencies = [
+    "typing-extensions; python_version < \"3.12\"",
+]
+files = [
+    {file = "types_aiobotocore_s3-2.25.0-py3-none-any.whl", hash = "sha256:637b8b3eabd71a8083e835adb696e08b8bab75fb2e3f1ef3020334659abdf698"},
+    {file = "types_aiobotocore_s3-2.25.0.tar.gz", hash = "sha256:3885d2d975b02490c4a59ab0d9c607dec2b7d650189f19a2b6a5e0f81a07e56d"},
+]
+
+[[package]]
+name = "types-aiobotocore"
+version = "2.25.0"
+extras = ["s3"]
+requires_python = ">=3.8"
+summary = "Type annotations for aiobotocore 2.25.0 generated with mypy-boto3-builder 8.11.0"
+groups = ["dev"]
+marker = "python_version == \"3.12\""
+dependencies = [
+    "types-aiobotocore-s3<2.26.0,>=2.25.0",
+    "types-aiobotocore==2.25.0",
+]
+files = [
+    {file = "types_aiobotocore-2.25.0-py3-none-any.whl", hash = "sha256:7a9efa7e8240774546b95ae0db3b6f7cbf9f05c89db317612ec1d678649a88ff"},
+    {file = "types_aiobotocore-2.25.0.tar.gz", hash = "sha256:7e5e96568935d5255095b5f8aaedc0c1b265770a260a2ab6ed7d4c7ea7fe8228"},
+]
+
+[[package]]
+name = "types-awscrt"
+version = "0.28.1"
+requires_python = ">=3.8"
+summary = "Type annotations and code completion for awscrt"
+groups = ["dev"]
+marker = "python_version == \"3.12\""
+files = [
+    {file = "types_awscrt-0.28.1-py3-none-any.whl", hash = "sha256:d88f43ef779f90b841ba99badb72fe153077225a4e426ae79e943184827b4443"},
+    {file = "types_awscrt-0.28.1.tar.gz", hash = "sha256:66d77ec283e1dc907526a44511a12624118723a396c36d3f3dd9855cb614ce14"},
 ]
 
 [[package]]

@@ -25,6 +25,7 @@ dev = [
     "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
     "mimesis>=18.0.0",
+    "types-aiobotocore[s3]>=2.25.0",
 ]
 
 
