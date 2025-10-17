@@ -37,6 +37,7 @@ class FcsFile(SQLModel, table=True):
     file_idno: str = Field(unique=True)
     file_name: str
     file_size_byte: int
+    s3_key: str | None = Field(unique=True)
 
     upload_batch_id: int = Field(foreign_key='upload_batches.id')
     upload_batch: UploadBatch = Relationship(back_populates='files')
@@ -47,6 +48,7 @@ class FcsFile(SQLModel, table=True):
             "file_idno": "01K7Q22M2BEXAD9XZGT3JZV58V",
             'file_name': "abc.fcs",
             "file_size_byte": 12345,
+            "s3_key": "01K7PXGBTMV8R5M3TZTJ79PSMF/abc.fcs",
             "upload_batch_id": 1,
         }],
     })
