@@ -16,6 +16,11 @@ class User(SQLModel, table=True):
     hashed_password: str
     email_verified: bool = False
 
+    # files: list['FcsFile'] = Relationship(
+    #     back_populates='user',
+    #     sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
+    # )
+
     model_config = ConfigDict(json_schema_extra={
         'examples': [{
             'id': 1,
@@ -57,6 +62,10 @@ class FcsFile(SQLModel, table=True):
     file_name: str
     file_size_byte: int
     s3_key: str | None = Field(unique=True)
+    public: bool = True
+
+    # user_id: int = Field(foreign_key='users.id')
+    # user: User = Relationship(back_populates='files')
 
     upload_batch_id: int = Field(foreign_key='upload_batches.id')
     upload_batch: UploadBatch = Relationship(back_populates='files')
