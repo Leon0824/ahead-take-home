@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from typing import Literal
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict
 
@@ -14,6 +15,19 @@ class JwtPayload(BaseModel):
         'examples': [{
             'sub': 'username',
             'exp': "2025-10-16T18:00:00Z",
+        }],
+    })
+
+
+
+class Token(BaseModel):
+    token_type: Literal['Bearer'] = 'Bearer'
+    access_token: str
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'token_type': 'Bearer',
+            'access_token': 'eyJh.eyJz.SflK',
         }],
     })
 

@@ -1,10 +1,14 @@
-from typing import Literal
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from datetime import timedelta
+from typing import Annotated, Literal
+from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 from sqlmodel import Session, select
 
-from app.auth import decode_token, generate_token, password_hash
+from app.auth import authenticate_account, decode_token, generate_token, password_hash
 from app.db import User, get_db_session
+from app.logging import logger
+from app.models import Token
 from app.settings import Settings, get_settings
 
 
@@ -68,3 +72,30 @@ async def verify_email(
     db_session.commit()
     return True
 
+
+
+@router.post('/sign-in', operation_id='sign-in')
+async def sign_in(
+    response: Response,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db_session: Session = Depends(get_db_session),
+    settings: Settings = Depends(get_settings),
+) -> Token:
+    _user = authenticate_account(username=form_data.username, password=form_data.password, db_session=db_session)
+
+    # if not _user.email_verified: raise HTTPException(status.HTTP_403_FORBIDDEN, {'email_verified': _user.email_verified})
+
+    _refresh_token = generate_token(key=settings.JWT_KEY.get_secret_value(), sub=_user.username, exp_weeks=1)
+    response.set_cookie(
+        'refresh_token',
+        _refresh_token,
+        int(timedelta(weeks=1).total_seconds()), # 604,800 seconds
+        httponly=True,
+    )
+
+    _access_token = generate_token(key=settings.JWT_KEY.get_secret_value(), sub=_user.username, exp_days=1)
+
+    logger.info({'title': 'User signed-in', 'user': _user.username})
+    return Token(access_token=_access_token)
+
+    
