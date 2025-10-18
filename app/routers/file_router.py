@@ -103,8 +103,7 @@ async def get_file_info(file_idno: str, db_session: Session = Depends(get_db_ses
     ...
 
     batch = file.upload_batch
-    info = FileInfo(file_idno=file.file_idno, file_name=file.file_name, file_size_byte=file.file_size_byte, upload_time=batch.upload_time)
-    return info
+    return FileInfo(file_idno=file.file_idno, file_name=file.file_name, file_size_byte=file.file_size_byte, upload_time=batch.upload_time)
 
 
 

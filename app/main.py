@@ -74,8 +74,8 @@ async def uploding_time_counter(request: Request, call_next: Callable[[Request],
         uploading_time_counter = time.perf_counter() - start
         logger.debug(f"File upload tooks {uploading_time_counter:.3f} seconds")
 
-        reqeust_headers: list[tuple[bytes]] = request.scope['headers']
-        reqeust_headers.append((b'uploading-time-counter', str(uploading_time_counter).encode()))
+        request_headers: list[tuple[bytes]] = request.scope['headers']
+        request_headers.append((b'uploading-time-counter', str(uploading_time_counter).encode()))
         return await call_next(Request(request.scope, {"type": "http.request", "body": body, "more_body": False}))
     else:
         return await call_next(request)
