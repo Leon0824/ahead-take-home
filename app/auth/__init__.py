@@ -53,7 +53,7 @@ def authenticate_account(username: str, password: str, db_session: Session):
     user = db_session.exec(select(User).where(User.username == username)).one_or_none()
     if not user:
         logger.warning({'title': 'User not found', 'email': username, 'password': password})
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED) from e
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
     
     _account_valid = verify_account_password(user=user, to_verify_password=password, db_session=db_session)
     if not _account_valid:

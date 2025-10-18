@@ -44,7 +44,7 @@ class TestUserPublicFile:
         # Sign in
         sign_in_response = await async_client.post('/auth/sign-in', data={'username': TestUserPublicFile.user.username, 'password': TestUserPublicFile.user.username})
         access_token = Token.model_validate(sign_in_response.json())
-        async_client.headers.update({'Authorization': f'{access_token.token_type} {access_token.token_string}'})
+        async_client.headers.update({'Authorization': f'{access_token.token_type} {access_token.access_token}'})
 
         # Upload
         upload_response = await async_client.post(

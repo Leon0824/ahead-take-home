@@ -96,7 +96,7 @@ async def sign_in(
     _access_token = generate_token(key=settings.JWT_KEY.get_secret_value(), sub=_user.username, exp_days=1)
 
     logger.info({'title': 'User signed-in', 'user': _user.username})
-    return Token(token_string=_access_token)
+    return Token(access_token=_access_token)
 
 
 
@@ -111,7 +111,7 @@ async def sign_out(
 
 
 
-@router.get('/refresh', operation_id='refresh_tokens')
+@router.post('/refresh', operation_id='refresh_tokens')
 async def refresh_tokens(
     response: Response,
     refresh_token: Annotated[str, Cookie(include_in_schema=False)] = None,
@@ -123,7 +123,7 @@ async def refresh_tokens(
     if not user: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
     if not refresh_token: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
-    _new_access_token = await generate_token(key=settings.JWT_KEY.get_secret_value(), sub=user.username, exp_days=1)
+    _new_access_token = generate_token(key=settings.JWT_KEY.get_secret_value(), sub=user.username, exp_days=1)
     _new_refresh_token = generate_token(key=settings.JWT_KEY.get_secret_value(), sub=user.username, exp_weeks=1)
     response.set_cookie(
         'refresh_token',
@@ -131,4 +131,7 @@ async def refresh_tokens(
         int(timedelta(weeks=1).total_seconds()), # 604,800 seconds
         httponly=True,
     )
+    # logger.debug(refresh_token)
+    # logger.debug(_new_refresh_token)
+    # logger.debug(_new_access_token)
     return Token(access_token=_new_access_token)

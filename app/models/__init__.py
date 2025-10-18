@@ -22,7 +22,7 @@ class JwtPayload(BaseModel):
 
 class Token(BaseModel):
     token_type: Literal['Bearer'] = 'Bearer'
-    token_string: str
+    access_token: str # 欄位名一定要叫 access_token，Swagger UI 的登入功能才會正常。
 
     model_config = ConfigDict(json_schema_extra={
         'examples': [{

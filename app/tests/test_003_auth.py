@@ -6,6 +6,7 @@ import pytest
 from sqlmodel import Session, select
 
 from app.db import User
+from app.logging import logger
 from app.models import Token
 
 
@@ -42,12 +43,38 @@ class TestAuth:
 
 
     @pytest.mark.asyncio
-    async def test_sign_in(self, async_client: AsyncClient):
-        response = await async_client.post('/auth/sign-in', data={'username': TestAuth.email, 'password': TestAuth.email})
-        assert response.status_code == HTTPStatus.OK
-        assert response.cookies.get('refresh_token')
-        access_token = Token.model_validate(response.json())
+    async def test_sign_in_to_sign_out(self, async_client: AsyncClient):
+        # Sign in
+        async_client.cookies.clear() # Clear all cookies before testing!
+        sign_in_response = await async_client.post('/auth/sign-in', data={'username': TestAuth.email, 'password': TestAuth.email})
+        assert sign_in_response.status_code == HTTPStatus.OK
+        
+        refresh_token_cookie = sign_in_response.cookies.get('refresh_token')
+        assert refresh_token_cookie
+        
+        access_token = Token.model_validate(sign_in_response.json())
         assert access_token
+        async_client.headers.update({'Authorization': f'{access_token.token_type} {access_token.access_token}'})
+
+        # Refresh
+        refresh_response = await async_client.post('/auth/refresh')
+        refresh_response = await async_client.post('/auth/refresh')
+        assert refresh_response.status_code == HTTPStatus.OK
+        
+        refresh_token_cookie2 = refresh_response.cookies.get('refresh_token')
+        assert refresh_token_cookie2
+        assert refresh_token_cookie != refresh_token_cookie2
+        
+        access_token2 = Token.model_validate(refresh_response.json())
+        assert access_token2
+        assert access_token != access_token2
+        async_client.headers.update({'Authorization': f'{access_token2.token_type} {access_token2.access_token}'})
+
+        # Sign out
+        sign_out_response = await async_client.post('/auth/sign-out')
+        assert sign_out_response.status_code == HTTPStatus.OK
+        refresh_token_cookie3 = sign_out_response.cookies.get('refresh_token')
+        assert not refresh_token_cookie3
 
 
     @pytest.mark.asyncio
