@@ -113,6 +113,34 @@ class TestUserPrivateFile:
 
 
     @pytest.mark.asyncio
+    async def test_make_user_file_public(
+        self,
+        async_client: AsyncClient, # 這個 client fixture 是新的，沒有帶 token 標頭。
+    ):
+        # Not sign-in
+        make_public_response = await async_client.post(f'/files/mine/{TestUserPrivateFile.file_idno}/make-public')
+        assert make_public_response.status_code == HTTPStatus.UNAUTHORIZED
+
+        # Sign in
+        sign_in_response = await async_client.post('/auth/sign-in', data={'username': TestUserPrivateFile.user.username, 'password': TestUserPrivateFile.user.username})
+        access_token = Token.model_validate(sign_in_response.json())
+        async_client.headers.update({'Authorization': f'{access_token.token_type} {access_token.access_token}'})
+
+        # Make public
+        make_public_response = await async_client.post(f'/files/mine/{TestUserPrivateFile.file_idno}/make-public')
+        assert make_public_response.status_code == HTTPStatus.OK
+
+        # Sign out
+        async_client.cookies.clear()
+        async_client.headers.clear()
+
+        # Download
+        download_url_response = await async_client.get(f'/files/{TestUserPrivateFile.file_idno}/generate-download-url')
+        assert download_url_response.status_code == HTTPStatus.CREATED
+        assert httpx.get(download_url_response.json())
+
+
+    @pytest.mark.asyncio
     async def test_teardown(self, db_session: Session):
         # Delete S3 files
         s3_session = get_session()

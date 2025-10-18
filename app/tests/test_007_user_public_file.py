@@ -29,9 +29,9 @@ mimesis_file = mimesis.File()
 class TestUserPublicFile:
     user: User
 
-    public_file_upload_batch_idno: str
-    public_file_idno: str
-    public_file_s3_key: str
+    file_upload_batch_idno: str
+    file_idno: str
+    file_s3_key: str
 
     
     @pytest.mark.asyncio
@@ -56,9 +56,9 @@ class TestUserPublicFile:
         logger.debug(async_client.headers.items())
         
         result = UploadBatchResult.model_validate(upload_response.json())
-        TestUserPublicFile.public_file_upload_batch_idno = result.batch_idno
-        TestUserPublicFile.public_file_idno = result.files[0].file_idno
-        TestUserPublicFile.public_file_s3_key = result.files[0].s3_key
+        TestUserPublicFile.file_upload_batch_idno = result.batch_idno
+        TestUserPublicFile.file_idno = result.files[0].file_idno
+        TestUserPublicFile.file_s3_key = result.files[0].s3_key
         
         # Chcck DB
         db_session.refresh(TestUserPublicFile.user)
@@ -84,13 +84,40 @@ class TestUserPublicFile:
         async_client: AsyncClient, # 這個 client fixture 是新的，沒有帶 token 標頭。
     ):
         # Get file info
-        info_response = await async_client.get(f'/files/{TestUserPublicFile.public_file_idno}')
+        info_response = await async_client.get(f'/files/{TestUserPublicFile.file_idno}')
         assert info_response.status_code == HTTPStatus.OK
 
         # Download
-        download_url_response = await async_client.get(f'/files/{TestUserPublicFile.public_file_idno}/generate-download-url')
+        download_url_response = await async_client.get(f'/files/{TestUserPublicFile.file_idno}/generate-download-url')
         assert download_url_response.status_code == HTTPStatus.CREATED
         assert httpx.get(download_url_response.json())
+
+    
+    @pytest.mark.asyncio
+    async def test_make_user_file_private(
+        self,
+        async_client: AsyncClient, # 這個 client fixture 是新的，沒有帶 token 標頭。
+    ):
+        # Not sign-in
+        make_private_response = await async_client.post(f'/files/mine/{TestUserPublicFile.file_idno}/make-private')
+        assert make_private_response.status_code == HTTPStatus.UNAUTHORIZED
+
+        # Sign in
+        sign_in_response = await async_client.post('/auth/sign-in', data={'username': TestUserPublicFile.user.username, 'password': TestUserPublicFile.user.username})
+        access_token = Token.model_validate(sign_in_response.json())
+        async_client.headers.update({'Authorization': f'{access_token.token_type} {access_token.access_token}'})
+
+        # Make private
+        make_private_response = await async_client.post(f'/files/mine/{TestUserPublicFile.file_idno}/make-private')
+        assert make_private_response.status_code == HTTPStatus.OK
+
+        # Sign out
+        async_client.cookies.clear()
+        async_client.headers.clear()
+
+        # Download
+        download_url_response = await async_client.get(f'/files/{TestUserPublicFile.file_idno}/generate-download-url')
+        assert download_url_response.status_code == HTTPStatus.NOT_FOUND
 
 
     @pytest.mark.asyncio
@@ -104,14 +131,14 @@ class TestUserPublicFile:
             aws_access_key_id=_SETTINGS.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=_SETTINGS.AWS_SECRET_ACCESS_KEY.get_secret_value(),
         ) as s3_client:
-            response1_before_delete = await s3_client.head_object(Bucket=_S3_BUCKET_NAME, Key=TestUserPublicFile.public_file_s3_key)
+            response1_before_delete = await s3_client.head_object(Bucket=_S3_BUCKET_NAME, Key=TestUserPublicFile.file_s3_key)
             assert response1_before_delete
-            await s3_client.delete_object(Bucket=_S3_BUCKET_NAME, Key=TestUserPublicFile.public_file_s3_key)
-            try: response1_after_delete = await s3_client.head_object(Bucket=_S3_BUCKET_NAME, Key=TestUserPublicFile.public_file_s3_key)
+            await s3_client.delete_object(Bucket=_S3_BUCKET_NAME, Key=TestUserPublicFile.file_s3_key)
+            try: response1_after_delete = await s3_client.head_object(Bucket=_S3_BUCKET_NAME, Key=TestUserPublicFile.file_s3_key)
             except ClientError as e1: assert e1
         
         # Delete DB UploadBatch and FcsFile reocrds
-        statement = select(UploadBatch).where(UploadBatch.batch_idno == TestUserPublicFile.public_file_upload_batch_idno)
+        statement = select(UploadBatch).where(UploadBatch.batch_idno == TestUserPublicFile.file_upload_batch_idno)
         batch = db_session.exec(statement).one_or_none()
         
         for f in batch.files: db_session.delete(f)

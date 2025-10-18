@@ -2,7 +2,7 @@ import asyncio
 from datetime import UTC, datetime
 import json
 import pathlib
-from typing import BinaryIO
+from typing import BinaryIO, Literal
 
 from aiobotocore.session import get_session
 from botocore.exceptions import BotoCoreError, ClientError
@@ -132,6 +132,42 @@ async def get_user_files_info(
 
     files = db_session.exec(select(FcsFile).where(FcsFile.user_id == user.id)).all()
     return [FileInfo(file_idno=f.file_idno, file_name=f.file_name, file_size_byte=f.file_size_byte, public=f.public, upload_time=f.upload_batch.upload_time) for f in files]
+
+
+
+@router.post('/mine/{file_idno}/make-public', operation_id='make_user_file_public')
+async def make_user_file_public(
+    file_idno: str,
+    db_session: Session = Depends(get_db_session),
+    user: User | None = Security(get_requestor_user),
+) -> Literal[True]:
+    if not user: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    
+    file = db_session.exec(select(FcsFile).where(FcsFile.file_idno == file_idno).where(FcsFile.user_id == user.id)).one_or_none()
+    if not file: raise HTTPException(status.HTTP_404_NOT_FOUND)
+    
+    file.public = True
+    db_session.add(file)
+    db_session.commit()
+    return True
+
+
+
+@router.post('/mine/{file_idno}/make-private', operation_id='make_user_file_private')
+async def make_user_file_private(
+    file_idno: str,
+    db_session: Session = Depends(get_db_session),
+    user: User | None = Security(get_requestor_user),
+) -> Literal[True]:
+    if not user: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    
+    file = db_session.exec(select(FcsFile).where(FcsFile.file_idno == file_idno).where(FcsFile.user_id == user.id)).one_or_none()
+    if not file: raise HTTPException(status.HTTP_404_NOT_FOUND)
+    
+    file.public = False
+    db_session.add(file)
+    db_session.commit()
+    return True
 
 
 
