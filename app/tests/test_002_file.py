@@ -87,6 +87,13 @@ class TestFile:
 
 
     @pytest.mark.asyncio
+    async def test_get_file_info_invalid_idno(self, async_client: AsyncClient):
+        invalid_idno = "nonexistent_idno"
+        response = await async_client.get(f'/files/{invalid_idno}')
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+    @pytest.mark.asyncio
     async def test_generate_download_url(self, async_client: AsyncClient):
         response1 = await async_client.get(f'/files/{TestFile.fcs_file1_idno}/generate-download-url')
         assert response1.status_code == HTTPStatus.CREATED
@@ -96,6 +103,13 @@ class TestFile:
 
         assert httpx.get(response1.json())
         assert httpx.get(response2.json())
+
+
+    @pytest.mark.asyncio
+    async def test_generate_download_url_invalid_file_idno(self, async_client: AsyncClient):
+        invalid_file_idno = "nonexistent-file-idno"
+        response = await async_client.get(f'/files/{invalid_file_idno}/generate-download-url')
+        assert response.status_code == HTTPStatus.NOT_FOUND
 
 
     @pytest.mark.asyncio
