@@ -8,6 +8,23 @@ from app.settings import get_settings
 
 
 
+class User(SQLModel, table=True):
+    __tablename__ = 'users'
+
+    id: int | None = Field(None, primary_key=True)
+    username: str = Field(unique=True)
+    hashed_password: str
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "username": "yin_che@gmail.com",
+            'hashed_password': "ABCXYZ",
+        }],
+    })
+
+
+
 class UploadBatch(SQLModel, table=True):
     __tablename__ = 'upload_batches'
 
