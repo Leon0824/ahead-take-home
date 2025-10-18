@@ -27,7 +27,7 @@ class Token(BaseModel):
     model_config = ConfigDict(json_schema_extra={
         'examples': [{
             'token_type': 'Bearer',
-            'token_string': 'eyJh.eyJz.SflK',
+            'access_token': 'eyJh.eyJz.SflK',
         }],
     })
 
