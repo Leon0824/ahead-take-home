@@ -96,6 +96,6 @@ async def sign_in(
     _access_token = generate_token(key=settings.JWT_KEY.get_secret_value(), sub=_user.username, exp_days=1)
 
     logger.info({'title': 'User signed-in', 'user': _user.username})
-    return Token(access_token=_access_token)
+    return Token(token_string=_access_token)
 
     

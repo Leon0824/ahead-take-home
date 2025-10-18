@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, timedelta
 from typing import Literal
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict
+from pydantic import AwareDatetime, BaseModel, ConfigDict, TypeAdapter
 
 from app.db import FcsFile
 
@@ -22,14 +22,22 @@ class JwtPayload(BaseModel):
 
 class Token(BaseModel):
     token_type: Literal['Bearer'] = 'Bearer'
-    access_token: str
+    token_string: str
 
     model_config = ConfigDict(json_schema_extra={
         'examples': [{
             'token_type': 'Bearer',
-            'access_token': 'eyJh.eyJz.SflK',
+            'token_string': 'eyJh.eyJz.SflK',
         }],
     })
+
+
+
+class UploadFileSetting(BaseModel):
+    filename: str
+    public: bool
+
+upload_file_setting_list_adapter = TypeAdapter(list[UploadFileSetting])
 
 
 

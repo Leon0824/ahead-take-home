@@ -18,6 +18,7 @@ class TestAuth:
     email: EmailStr
     user: User
 
+
     @pytest.mark.asyncio
     async def test_sign_up(self, async_client: AsyncClient):
         TestAuth.email = mimesis_person.email(unique=True)
