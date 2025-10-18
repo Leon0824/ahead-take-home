@@ -36,7 +36,7 @@ async def send_verification_mail(
 @router.post('/sign-up', status_code=status.HTTP_201_CREATED, operation_id='sign_up')
 async def sign_up(
     email: EmailStr = Body(embed=True),
-    password: str = Body(embed=True),
+    password: str = Body(embed=True, min_length=8),
     db_session: Session = Depends(get_db_session),
     settings: Settings = Depends(get_settings),
 ) -> Literal[True]:
