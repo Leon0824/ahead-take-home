@@ -1,11 +1,11 @@
 from datetime import timedelta
 from typing import Annotated, Literal
-from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Body, Cookie, Depends, HTTPException, Request, Response, Security, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 from sqlmodel import Session, select
 
-from app.auth import authenticate_account, decode_token, generate_token, password_hash
+from app.auth import authenticate_account, decode_token, generate_token, get_requestor_user, password_hash
 from app.db import User, get_db_session
 from app.logging import logger
 from app.models import Token
@@ -98,4 +98,37 @@ async def sign_in(
     logger.info({'title': 'User signed-in', 'user': _user.username})
     return Token(token_string=_access_token)
 
-    
+
+
+@router.post('/sign-out', operation_id='sign-out')
+async def sign_out(
+    response: Response,
+    user: User | None = Security(get_requestor_user),
+) -> Literal[True]:
+    logger.info(f'User {user.username} is signing out')
+    response.delete_cookie('refresh_token')
+    return True
+
+
+
+@router.get('/refresh', operation_id='refresh_tokens')
+async def refresh_tokens(
+    response: Response,
+    refresh_token: Annotated[str, Cookie(include_in_schema=False)] = None,
+    user: User | None = Security(get_requestor_user),
+    settings: Settings = Depends(get_settings),
+) -> Token:
+    '''
+    '''
+    if not user: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    if not refresh_token: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+    _new_access_token = await generate_token(key=settings.JWT_KEY.get_secret_value(), sub=user.username, exp_days=1)
+    _new_refresh_token = generate_token(key=settings.JWT_KEY.get_secret_value(), sub=user.username, exp_weeks=1)
+    response.set_cookie(
+        'refresh_token',
+        _new_refresh_token,
+        int(timedelta(weeks=1).total_seconds()), # 604,800 seconds
+        httponly=True,
+    )
+    return Token(access_token=_new_access_token)
