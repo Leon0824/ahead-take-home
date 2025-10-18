@@ -6,10 +6,9 @@ from httpx import AsyncClient
 import httpx
 import mimesis
 import pytest
-import pytest_asyncio
 from sqlmodel import Session, select
 
-from app.db import UploadBatch, engine
+from app.db import UploadBatch
 from app.logging import logger
 from app.models import UploadBatchResult
 from app.settings import get_settings
@@ -23,13 +22,6 @@ _S3_BUCKET_NAME = 'ahead-fcs-files'
 
 mimesis_binary_file = mimesis.BinaryFile()
 mimesis_file = mimesis.File()
-
-
-
-@pytest_asyncio.fixture
-async def db_session():
-    with Session(engine) as session:
-        yield session
 
 
 

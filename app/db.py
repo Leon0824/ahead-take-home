@@ -8,6 +8,30 @@ from app.settings import get_settings
 
 
 
+class User(SQLModel, table=True):
+    __tablename__ = 'users'
+
+    id: int | None = Field(None, primary_key=True)
+    username: str = Field(unique=True)
+    hashed_password: str
+    email_verified: bool = False
+
+    files: list['FcsFile'] = Relationship(
+        back_populates='user',
+        sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
+    )
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "username": "yin_che@gmail.com",
+            'hashed_password': "ABCXYZ",
+            "email_verified": False,
+        }],
+    })
+
+
+
 class UploadBatch(SQLModel, table=True):
     __tablename__ = 'upload_batches'
 
@@ -38,6 +62,10 @@ class FcsFile(SQLModel, table=True):
     file_name: str
     file_size_byte: int
     s3_key: str | None = Field(unique=True)
+    public: bool = True
+
+    user_id: int | None = Field(None, foreign_key='users.id')
+    user: User | None = Relationship(back_populates='files')
 
     upload_batch_id: int = Field(foreign_key='upload_batches.id')
     upload_batch: UploadBatch = Relationship(back_populates='files')
