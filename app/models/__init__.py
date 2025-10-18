@@ -1,8 +1,22 @@
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict
 
 from app.db import FcsFile
+
+
+
+class JwtPayload(BaseModel):
+    sub: str
+    exp: AwareDatetime
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'sub': 'username',
+            'exp': "2025-10-16T18:00:00Z",
+        }],
+    })
+
 
 
 class UploadBatchResult(BaseModel):

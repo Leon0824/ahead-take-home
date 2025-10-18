@@ -14,12 +14,14 @@ class User(SQLModel, table=True):
     id: int | None = Field(None, primary_key=True)
     username: str = Field(unique=True)
     hashed_password: str
+    email_verified: bool = False
 
     model_config = ConfigDict(json_schema_extra={
         'examples': [{
             'id': 1,
             "username": "yin_che@gmail.com",
             'hashed_password': "ABCXYZ",
+            "email_verified": False,
         }],
     })
 
