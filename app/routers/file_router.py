@@ -149,6 +149,7 @@ async def make_user_file_public(
     file.public = True
     db_session.add(file)
     db_session.commit()
+    logger.info(f'User {user.username} is making file {file.file_name} public')
     return True
 
 
@@ -167,6 +168,7 @@ async def make_user_file_private(
     file.public = False
     db_session.add(file)
     db_session.commit()
+    logger.info(f'User {user.username} is making file {file.file_name} private')
     return True
 
 
