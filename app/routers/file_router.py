@@ -168,6 +168,8 @@ async def generate_download_url(
         if not user: raise HTTPException(status.HTTP_404_NOT_FOUND)
         if file.user_id != user.id: raise HTTPException(status.HTTP_404_NOT_FOUND)
 
+    if user: logger.info(f'User {user.username} is downloading file {file.s3_key}')
+
     s3_session = get_session()
     async with s3_session.create_client(
         service_name='s3',
