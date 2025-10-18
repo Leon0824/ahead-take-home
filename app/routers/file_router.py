@@ -123,6 +123,18 @@ async def upload_fcs_files(
 
 
 
+@router.get('/mine', operation_id='get_user_files_info')
+async def get_user_files_info(
+    user: User | None = Security(get_requestor_user),
+    db_session: Session = Depends(get_db_session),
+) -> list[FileInfo]:
+    if not user: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+
+    files = db_session.exec(select(FcsFile).where(FcsFile.user_id == user.id)).all()
+    return [FileInfo(file_idno=f.file_idno, file_name=f.file_name, file_size_byte=f.file_size_byte, public=f.public, upload_time=f.upload_batch.upload_time) for f in files]
+
+
+
 @router.get('/{file_idno}', operation_id='get_file_info')
 async def get_file_info(
     file_idno: str,
@@ -138,7 +150,7 @@ async def get_file_info(
         if file.user_id != user.id: raise HTTPException(status.HTTP_404_NOT_FOUND)
 
     batch = file.upload_batch
-    return FileInfo(file_idno=file.file_idno, file_name=file.file_name, file_size_byte=file.file_size_byte, upload_time=batch.upload_time)
+    return FileInfo(file_idno=file.file_idno, file_name=file.file_name, file_size_byte=file.file_size_byte, public=file.public, upload_time=batch.upload_time)
 
 
 
@@ -165,3 +177,4 @@ async def generate_download_url(
         aws_secret_access_key=_SETTINGS.AWS_SECRET_ACCESS_KEY.get_secret_value(),
     ) as s3_client:
         return await s3_client.generate_presigned_url('get_object', {'Bucket': _S3_BUCKET_NAME, 'Key': file.s3_key}, 60) # 一分鐘過期
+    

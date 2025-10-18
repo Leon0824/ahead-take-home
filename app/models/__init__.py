@@ -64,6 +64,7 @@ class FileInfo(BaseModel):
     file_idno: str
     file_name: str
     file_size_byte: int
+    public: bool
     upload_time: AwareDatetime
 
     model_config = ConfigDict(

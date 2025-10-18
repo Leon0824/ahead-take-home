@@ -11,7 +11,7 @@ from sqlmodel import Session, select
 
 from app.db import UploadBatch, User
 from app.logging import logger
-from app.models import Token, UploadBatchResult, UploadFileSetting
+from app.models import FileInfo, Token, UploadBatchResult, UploadFileSetting
 from app.settings import get_settings
 
 
@@ -36,8 +36,8 @@ class TestUserPublicFile:
     
     @pytest.mark.asyncio
     async def test_user_upload_public_files(self, async_client: AsyncClient, new_user: User, db_session: Session):
-        public_file = mimesis_binary_file.compressed()
-        public_file_name = mimesis_file.file_name() + '.fcs'
+        file = mimesis_binary_file.compressed()
+        file_name = mimesis_file.file_name() + '.fcs'
 
         TestUserPublicFile.user = new_user
 
@@ -49,8 +49,8 @@ class TestUserPublicFile:
         # Upload
         upload_response = await async_client.post(
             '/files/upload',
-            files={'upload_files': (public_file_name, public_file)},
-            data={'upload_file_settings': json.dumps([UploadFileSetting(filename=public_file_name, public=True).model_dump()])},
+            files={'upload_files': (file_name, file)},
+            data={'upload_file_settings': json.dumps([UploadFileSetting(filename=file_name, public=True).model_dump()])},
         )
         assert upload_response.status_code == HTTPStatus.CREATED
         logger.debug(async_client.headers.items())
@@ -65,6 +65,17 @@ class TestUserPublicFile:
         db_file = TestUserPublicFile.user.files[0]
         assert db_file
         assert db_file.public
+
+        # List user files
+        user_files_response = await async_client.get('/files/mine')
+        assert user_files_response.status_code == HTTPStatus.OK
+        
+        file_info_dict_list: list[dict] = user_files_response.json()
+        file_info_list = [FileInfo.model_validate(item) for item in file_info_dict_list]
+        assert file_info_list
+        assert len(file_info_list) == 1
+        assert file_info_list[0]
+        assert file_info_list[0].file_name == file_name
 
 
     @pytest.mark.asyncio

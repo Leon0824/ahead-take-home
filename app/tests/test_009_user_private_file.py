@@ -11,7 +11,7 @@ from sqlmodel import Session, select
 
 from app.db import UploadBatch, User
 from app.logging import logger
-from app.models import Token, UploadBatchResult, UploadFileSetting
+from app.models import FileInfo, Token, UploadBatchResult, UploadFileSetting
 from app.settings import get_settings
 
 
@@ -65,6 +65,17 @@ class TestUserPrivateFile:
         db_file = TestUserPrivateFile.user.files[0]
         assert db_file
         assert not db_file.public
+
+        # List user files
+        user_files_response = await async_client.get('/files/mine')
+        assert user_files_response.status_code == HTTPStatus.OK
+        
+        file_info_dict_list: list[dict] = user_files_response.json()
+        file_info_list = [FileInfo.model_validate(item) for item in file_info_dict_list]
+        assert file_info_list
+        assert len(file_info_list) == 1
+        assert file_info_list[0]
+        assert file_info_list[0].file_name == file_name
 
 
     @pytest.mark.asyncio
