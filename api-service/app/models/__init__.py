@@ -85,6 +85,7 @@ class JobRead(BaseModel):
     queue_job_id: UUID
     job_type: JobTypeEnum
     job_args: dict[str, Any] | None = None
+    job_working_duration_second: float | None
     status: JobStatusEnum
     result: dict[str, Any] | None = None
 
@@ -96,6 +97,7 @@ class JobRead(BaseModel):
                 "queue_job_id": "43f62c95-8b3d-43ce-9151-04000deb09e9",
                 "job_type": JobTypeEnum.FILES_STAT,
                 "job_args": {'user_id': 1},
+                "job_working_duration_second": None,
                 'status': JobStatusEnum.PENDING,
                 "result": {"files_count": 2, "files_size_byte_sum": 123},
             }],

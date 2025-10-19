@@ -113,6 +113,7 @@ class Job(SQLModel, table=True):
     queue_job_id: UUID | None = Field(None, unique=True)
     job_type: JobTypeEnum = Field(sa_type=AutoString)
     job_args: dict[str, Any] | None = Field(None, sa_type=JSON)
+    job_working_duration_second: float | None = None
     status: JobStatusEnum = Field(JobStatusEnum.PENDING, sa_type=AutoString)
     result: dict[str, Any] | None = Field(None, sa_type=JSON)
 
@@ -125,6 +126,7 @@ class Job(SQLModel, table=True):
             "queue_job_id": "9786d1be-ae6b-4902-b366-106d9e7aca70V",
             'job_type': JobTypeEnum.FILES_STAT,
             "job_args": {},
+            "job_working_duration_second": None,
             "status": JobStatusEnum.PENDING,
             "result": {},
             "user_id": 1,
