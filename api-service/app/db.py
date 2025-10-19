@@ -137,7 +137,7 @@ _SETTINGS = get_settings()
 
 
 
-engine = create_engine(
+_engine = create_engine(
     _SETTINGS.DATABASE_URL,
     # echo='debug',
 )
@@ -153,4 +153,4 @@ metadata = SQLModel.metadata
 
 
 def get_db_session():
-    with Session(engine) as session: yield session
+    with Session(_engine) as session: yield session

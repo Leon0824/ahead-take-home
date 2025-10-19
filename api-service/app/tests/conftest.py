@@ -3,7 +3,7 @@ import mimesis
 import pytest_asyncio
 from sqlmodel import Session, select
 
-from app.db import User, engine
+from app.db import User, _engine
 from app.main import app
 
 
@@ -20,7 +20,7 @@ async def async_client():
 
 @pytest_asyncio.fixture
 async def db_session():
-    with Session(engine) as session:
+    with Session(_engine) as session:
         yield session
 
 
