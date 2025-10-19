@@ -90,3 +90,46 @@ class JobRead(BaseModel):
 
     user_id: int
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [{
+                "queue_job_id": "43f62c95-8b3d-43ce-9151-04000deb09e9",
+                "job_type": JobTypeEnum.FILES_STAT,
+                "job_args": {'user_id': 1},
+                'status': JobStatusEnum.PENDING,
+                "result": {"files_count": 2, "files_size_byte_sum": 123},
+            }],
+        }
+    )
+
+
+
+class FilesStat(BaseModel):
+    files_count: int
+    files_size_byte_sum: int
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [{
+                "files_count": 2,
+                "files_size_byte_sum": 123,
+            }],
+        }
+    )
+
+
+
+class FilesStatJobRead(JobRead):
+    result: FilesStat | None
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [{
+                "queue_job_id": "43f62c95-8b3d-43ce-9151-04000deb09e9",
+                "job_type": JobTypeEnum.FILES_STAT,
+                "job_args": {'user_id': 1},
+                'status': JobStatusEnum.PENDING,
+                "result": {"files_count": 2, "files_size_byte_sum": 123},
+            }],
+        }
+    )

@@ -10,7 +10,7 @@ import pytest
 from sqlmodel import Session, select
 
 from app.db import JobStatusEnum, JobTypeEnum, UploadBatch, User
-from app.models import JobRead, Token, UploadBatchResult, UploadFileSetting
+from app.models import FilesStatJobRead, JobRead, Token, UploadBatchResult, UploadFileSetting
 from app.settings import get_settings
 
 
@@ -65,6 +65,7 @@ class TestUserFilesStatJob:
         TestUserFilesStatJob.file_s3_key = result.files[0].s3_key
 
         # Create job
+        # 這裡建立 job 後，下面 teardown 會立馬清除 DB 的 fcs_file 紀錄，所以在 worker 那邊，檔案計數和大小合計都會是 0。
         create_job_response = await TestUserFilesStatJob.async_client.post(f'/me/files/stat-jobs/create', params={'file_idno': TestUserFilesStatJob.file_idno})
         assert create_job_response.status_code == HTTPStatus.CREATED
         TestUserFilesStatJob.queue_job_id = UUID(create_job_response.json())
@@ -74,10 +75,10 @@ class TestUserFilesStatJob:
     async def test_get_job(self):
         response = await TestUserFilesStatJob.async_client.get(f'/me/files/stat-jobs/{TestUserFilesStatJob.queue_job_id}')
         assert response.status_code == HTTPStatus.OK
-        job_read = JobRead.model_validate(response.json())
+        job_read = FilesStatJobRead.model_validate(response.json())
         assert job_read.queue_job_id == TestUserFilesStatJob.queue_job_id
         assert job_read.job_type == JobTypeEnum.FILES_STAT
-        assert job_read.status == JobStatusEnum.PENDING
+        assert job_read.status == JobStatusEnum.PENDING # 如果 worker 正在跑，會變成 RUNNING，就會報錯。
         assert job_read.user_id == TestUserFilesStatJob.user.id
 
 
