@@ -25,10 +25,10 @@ class User(SQLModel, table=True):
         sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
     )
 
-    # queue_jobs: list['Job'] = Relationship(
-    #     back_populates='user',
-    #     sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
-    # )
+    queue_jobs: list['Job'] = Relationship(
+        back_populates='user',
+        sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
+    )
 
     model_config = ConfigDict(json_schema_extra={
         'examples': [{
@@ -107,8 +107,8 @@ class Job(SQLModel, table=True):
     job_kwargs: dict[str, Any] | None = Field(None, sa_type=JSON)
     result: dict[str, Any] | None = Field(None, sa_type=JSON)
 
-    # user_id: int = Field(foreign_key='users.id')
-    # user: User = Relationship(back_populates='queue_jobs')
+    user_id: int = Field(foreign_key='users.id')
+    user: User = Relationship(back_populates='queue_jobs')
 
     model_config = ConfigDict(json_schema_extra={
         'examples': [{
