@@ -1,9 +1,10 @@
 from datetime import UTC, datetime, timedelta
-from typing import Literal
+from typing import Any, Literal
+from uuid import UUID
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, TypeAdapter
 
-from app.db import FcsFile
+from app.db import FcsFile, JobStatusEnum, JobTypeEnum
 
 
 
@@ -77,3 +78,15 @@ class FileInfo(BaseModel):
             }],
         }
     )
+
+
+
+class JobRead(BaseModel):
+    queue_job_id: UUID
+    job_type: JobTypeEnum
+    job_kwargs: dict[str, Any] | None = None
+    status: JobStatusEnum
+    result: dict[str, Any] | None = None
+
+    user_id: int
+

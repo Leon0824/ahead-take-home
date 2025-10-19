@@ -53,7 +53,6 @@ class TestUserPrivateFile:
             data={'upload_file_settings': json.dumps([UploadFileSetting(filename=file_name, public=False).model_dump()])},
         )
         assert upload_response.status_code == HTTPStatus.CREATED
-        logger.debug(async_client.headers.items())
         
         result = UploadBatchResult.model_validate(upload_response.json())
         TestUserPrivateFile.file_upload_batch_idno = result.batch_idno
