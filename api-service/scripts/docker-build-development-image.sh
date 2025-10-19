@@ -1,1 +1,1 @@
-docker buildx build --file ./Containerfile --tag ahead-take-home:development .
+docker buildx build --file ./Containerfile --tag ahead-api-service:development .

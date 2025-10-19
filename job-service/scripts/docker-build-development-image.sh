@@ -1,0 +1,1 @@
+docker buildx build --file ./Containerfile --tag ahead-job-service:development .
