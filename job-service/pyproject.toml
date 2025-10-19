@@ -3,11 +3,22 @@ name = "job-service"
 version = "0.1.0"
 description = "Default template for PDM package"
 authors = [{ name = "Leon" }]
-dependencies = ["rq>=2.6.0", "loguru>=0.7.3", "pydantic-settings>=2.11.0"]
+dependencies = [
+    "rq>=2.6.0",
+    "loguru>=0.7.3",
+    "pydantic-settings>=2.11.0",
+    "psycopg[binary]>=3.2.11",
+    "sqlmodel>=0.0.27",
+]
 requires-python = ">=3.12"
 readme = "README.md"
 
 
+[project.optional-dependencies]
+dev = [
+    "ipykernel>=7.0.1",
+    "pytest-cov>=7.0.0",
+]
 [tool.pdm]
 distribution = false
 
