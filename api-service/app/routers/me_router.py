@@ -48,7 +48,8 @@ async def get_user_files_stat_jobs(
 ) -> list[JobRead]:
     if not user: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
     
-    jobs = db_session.exec(select(Job).where(Job.user_id == user.id)).all()
+    statement = select(Job).where(Job.user_id == user.id).where(Job.job_type == JobTypeEnum.FILES_STAT)
+    jobs = db_session.exec(statement).all()
     return [JobRead.model_validate(j, from_attributes=True) for j in jobs]
     
 
@@ -62,6 +63,7 @@ async def get_user_files_stat_job(
 ) -> FilesStatJobRead:
     if not user: raise HTTPException(status.HTTP_401_UNAUTHORIZED)
 
-    job = db_session.exec(select(Job).where(Job.queue_job_id == job_id).where(Job.user_id == user.id)).one_or_none()
+    statement = select(Job).where(Job.queue_job_id == job_id).where(Job.user_id == user.id).where(Job.job_type == JobTypeEnum.FILES_STAT)
+    job = db_session.exec(statement).one_or_none()
     if not job: raise HTTPException(status.HTTP_404_NOT_FOUND)
     return FilesStatJobRead.model_validate(job, from_attributes=True)
