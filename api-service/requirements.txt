@@ -85,6 +85,9 @@ click==8.3.0; python_version == "3.12" \
 colorama==0.4.6; sys_platform == "win32" and python_version == "3.12" or platform_system == "Windows" and python_version == "3.12" \
     --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
     --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
+croniter==6.0.0; python_version == "3.12" \
+    --hash=sha256:2f878c3856f17896979b2a4379ba1f09c83e374931ea15cc835c5dd2eee9b368 \
+    --hash=sha256:37c504b313956114a983ece2c2b07790b1f1094fe9d81cc94739214748255577
 cryptography==46.0.3; python_version == "3.12" \
     --hash=sha256:01ca9ff2885f3acc98c29f1860552e37f6d7c7d013d7334ff2a9de43a449315d \
     --hash=sha256:09859af8466b69bc3c27bdf4f5d84a665e0f7ab5088412e9e2ec49758eca5cbc \
@@ -315,6 +318,9 @@ python-multipart==0.0.20; python_version == "3.12" \
 python-ulid==3.1.0; python_version == "3.12" \
     --hash=sha256:e2cdc979c8c877029b4b7a38a6fba3bc4578e4f109a308419ff4d3ccf0a46619 \
     --hash=sha256:ff0410a598bc5f6b01b602851a3296ede6f91389f913a5d5f8c496003836f636
+pytz==2025.2; python_version == "3.12" \
+    --hash=sha256:360b9e3dbb49a209c21ad61809c7fb453643e048b38924c765813546746e81c3 \
+    --hash=sha256:5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00
 pyyaml==6.0.3; python_version == "3.12" \
     --hash=sha256:41715c910c881bc081f1e8872880d3c650acf13dfa8214bad49ed4cede7c34ea \
     --hash=sha256:5fcd34e47f6e0b794d17de1b4ff496c00986e1c83f7ab2fb8fcfe9616ff7477b \
@@ -327,6 +333,9 @@ pyyaml==6.0.3; python_version == "3.12" \
     --hash=sha256:ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc \
     --hash=sha256:d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f \
     --hash=sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0
+redis==6.4.0; python_version == "3.12" \
+    --hash=sha256:b01bc7282b8444e28ec36b261df5375183bb47a07eb9c603f284e89cbc5ef010 \
+    --hash=sha256:f0544fa9604264e9464cdf4814e7d4830f74b165d52f2a330a760a88dd248b7f
 rich==14.2.0; python_version == "3.12" \
     --hash=sha256:73ff50c7c0c1c77c8243079283f4edb376f0f6442433aecb8ce7e6d0b92d1fe4 \
     --hash=sha256:76bc51fe2e57d2b1be1f96c524b890b816e334ab4c1e45888799bfaab0021edd
@@ -349,6 +358,9 @@ rignore==0.7.0; python_version == "3.12" \
     --hash=sha256:d261aea1a51ef93c262b52ad195a1092a8bae17577e8192473d1b5fd30379346 \
     --hash=sha256:da1b9ccc2cf6df196fe3187287e7ed858e967ae56974901414031f5524ea33b8 \
     --hash=sha256:df6d38f3c3903bfeec94e8a927a3656e0b95c27d3b5c29e63797dd359978aff8
+rq==2.6.0; python_version == "3.12" \
+    --hash=sha256:92ad55676cda14512c4eea5782f398a102dc3af108bea197c868c4c50c5d3e81 \
+    --hash=sha256:be5ccc0f0fc5f32da0999648340e31476368f08067f0c3fce6768d00064edbb5
 sentry-sdk==2.41.0; python_version == "3.12" \
     --hash=sha256:343cde6540574113d13d178d1b2093e011ac21dd55abd3a1ec7e540f0d18a5bd \
     --hash=sha256:e7af3f4d7f8bac4c56fbaf95adb0d111f061cce58d5df91cfcd4e69782759b10
