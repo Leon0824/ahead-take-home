@@ -12,7 +12,7 @@ dependencies = [
     "aiobotocore>=2.25.0",
     "python-ulid>=3.1.0",
     "alembic>=1.17.0",
-    "psycopg[binary]>=3.2.10",
+    "psycopg[binary]>=3.2",
     "pwdlib[argon2]>=0.2.1",
     "pyjwt[crypto]>=2.10.1",
 ]
