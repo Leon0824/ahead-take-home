@@ -1,4 +1,4 @@
-from time import sleep
+import time
 
 from rq import get_current_job
 from sqlmodel import Session, select, func
@@ -9,6 +9,7 @@ from jobs.logging import logger
 
 
 def do_files_stat(user_id: int):
+    start_time = time.perf_counter()
     job = get_current_job()
     if not job:
         logger.error(f'Current job not found, it may not be ran from the job queue?')
@@ -37,6 +38,7 @@ def do_files_stat(user_id: int):
         # Finish the job
         db_job.result = result.model_dump()
         db_job.status = JobStatusEnum.FINISHED
+        db_job.job_working_duration_second = time.perf_counter() - start_time
         session.add(db_job)
         session.commit()
         session.refresh(db_job)
