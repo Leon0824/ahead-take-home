@@ -1,7 +1,11 @@
 from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
+from uuid import UUID, uuid4
 
 from pydantic import ConfigDict
-from sqlalchemy import TIMESTAMP, MetaData, create_engine, DATETIME
+from sqlalchemy import TIMESTAMP, MetaData, create_engine, DATETIME, JSON
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel, Session, func
 
 from app.settings import get_settings
@@ -20,6 +24,11 @@ class User(SQLModel, table=True):
         back_populates='user',
         sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
     )
+
+    # queue_jobs: list['Job'] = Relationship(
+    #     back_populates='user',
+    #     sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
+    # )
 
     model_config = ConfigDict(json_schema_extra={
         'examples': [{
@@ -81,6 +90,36 @@ class FcsFile(SQLModel, table=True):
         }],
     })
 
+
+
+class JobTypeEnum(StrEnum):
+    FILES_STAT = 'FILES_STAT'
+    FCS_INFO = 'FCS_INFO'
+
+
+
+class Job(SQLModel, table=True):
+    __tablename__ = 'jobs'
+
+    id: int | None = Field(None, primary_key=True)
+    queue_job_id: UUID | None = Field(None, unique=True)
+    job_type: JobTypeEnum
+    job_kwargs: dict[str, Any] | None = Field(None, sa_type=JSON)
+    result: dict[str, Any] | None = Field(None, sa_type=JSON)
+
+    # user_id: int = Field(foreign_key='users.id')
+    # user: User = Relationship(back_populates='queue_jobs')
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "queue_job_id": "9786d1be-ae6b-4902-b366-106d9e7aca70V",
+            'job_type': JobTypeEnum.FILES_STAT,
+            "job_kwargs": {},
+            "result": {},
+            "user_id": 1,
+        }],
+    })
 
 
 
