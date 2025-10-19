@@ -84,7 +84,7 @@ class FileInfo(BaseModel):
 class JobRead(BaseModel):
     queue_job_id: UUID
     job_type: JobTypeEnum
-    job_kwargs: dict[str, Any] | None = None
+    job_args: dict[str, Any] | None = None
     status: JobStatusEnum
     result: dict[str, Any] | None = None
 

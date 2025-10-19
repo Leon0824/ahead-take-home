@@ -4,9 +4,9 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from pydantic import ConfigDict
-from sqlalchemy import TIMESTAMP, MetaData, create_engine, VARCHAR, JSON
+from sqlalchemy import TIMESTAMP, MetaData, create_engine, VARCHAR
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlmodel import AutoString, Field, Relationship, SQLModel, Session, func
+from sqlmodel import AutoString, Field, Relationship, SQLModel, Session, JSON
 
 from app.settings import get_settings
 
@@ -86,6 +86,7 @@ class FcsFile(SQLModel, table=True):
             'file_name': "abc.fcs",
             "file_size_byte": 12345,
             "s3_key": "01K7PXGBTMV8R5M3TZTJ79PSMF/abc.fcs",
+            "user_id": 1,
             "upload_batch_id": 1,
         }],
     })
@@ -111,7 +112,7 @@ class Job(SQLModel, table=True):
     id: int | None = Field(None, primary_key=True)
     queue_job_id: UUID | None = Field(None, unique=True)
     job_type: JobTypeEnum = Field(sa_type=AutoString)
-    job_kwargs: dict[str, Any] | None = Field(None, sa_type=JSON)
+    job_args: dict[str, Any] | None = Field(None, sa_type=JSON)
     status: JobStatusEnum = Field(JobStatusEnum.PENDING, sa_type=AutoString)
     result: dict[str, Any] | None = Field(None, sa_type=JSON)
 
@@ -123,7 +124,7 @@ class Job(SQLModel, table=True):
             'id': 1,
             "queue_job_id": "9786d1be-ae6b-4902-b366-106d9e7aca70V",
             'job_type': JobTypeEnum.FILES_STAT,
-            "job_kwargs": {},
+            "job_args": {},
             "status": JobStatusEnum.PENDING,
             "result": {},
             "user_id": 1,
