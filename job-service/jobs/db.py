@@ -2,7 +2,7 @@ from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import AwareDatetime, BaseModel, ConfigDict
 from sqlmodel import JSON, AutoString, Field, SQLModel, Session, create_engine
 
 from jobs.settings import get_settings
@@ -87,6 +87,29 @@ class FilesStat(BaseModel):
             'examples': [{
                 "files_count": 2,
                 "files_size_byte_sum": 123,
+            }],
+        }
+    )
+
+
+
+class FcsInfo(BaseModel):
+    file_name: str
+    file_size_byte: int
+    file_upload_time: AwareDatetime
+    fcs_version: str
+    fcs_pnn_labels: list[str]
+    fcs_event_count: int
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [{
+                "file_name": "create_fcs_example.fcs",
+                "file_size_byte": 216432,
+                "file_upload_time": "2025-10-16T18:00:00Z",
+                "fcs_version": "2.0",
+                "fcs_pnn_labels": ['FSC-H', 'SSC-H', 'FL1-H', 'FL2-H', 'FL3-H', 'FL2-A', 'FL4-H', 'Time'],
+                "fcs_event_count": 13367,
             }],
         }
     )

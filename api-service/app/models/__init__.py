@@ -135,3 +135,50 @@ class FilesStatJobRead(JobRead):
             }],
         }
     )
+
+
+
+class FcsInfo(BaseModel):
+    file_name: str
+    file_size_byte: int
+    file_upload_time: AwareDatetime
+    fcs_version: str
+    fcs_pnn_labels: list[str]
+    fcs_event_count: int
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [{
+                "file_name": "create_fcs_example.fcs",
+                "file_size_byte": 216432,
+                "file_upload_time": "2025-10-16T18:00:00Z",
+                "fcs_version": "2.0",
+                "fcs_pnn_labels": ['FSC-H', 'SSC-H', 'FL1-H', 'FL2-H', 'FL3-H', 'FL2-A', 'FL4-H', 'Time'],
+                "fcs_event_count": 13367,
+            }],
+        }
+    )
+
+
+
+class FcsInfoJobRead(JobRead):
+    result: FcsInfo | None
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [{
+                "queue_job_id": "43f62c95-8b3d-43ce-9151-04000deb09e9",
+                "job_type": JobTypeEnum.FCS_INFO,
+                "job_args": {'user_id': 1},
+                'status': JobStatusEnum.PENDING,
+                "result": {
+                    "file_name": "create_fcs_example.fcs",
+                    "file_size_byte": 216432,
+                    "file_upload_time": "2025-10-16T18:00:00Z",
+                    "fcs_version": "2.0",
+                    "fcs_pnn_labels": ['FSC-H', 'SSC-H', 'FL1-H', 'FL2-H', 'FL3-H', 'FL2-A', 'FL4-H', 'Time'],
+                    "fcs_event_count": 13367,
+                },
+            }],
+        }
+    )
