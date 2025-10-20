@@ -4,9 +4,9 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from pydantic import ConfigDict
-from sqlalchemy import TIMESTAMP, MetaData, create_engine, VARCHAR
+from sqlalchemy import MetaData, create_engine, VARCHAR
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlmodel import AutoString, Field, Relationship, SQLModel, Session, JSON
+from sqlmodel import AutoString, Field, Relationship, SQLModel, Session, JSON, TIMESTAMP
 
 from app.settings import get_settings
 
