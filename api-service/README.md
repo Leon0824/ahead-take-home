@@ -1,5 +1,40 @@
 # Ahead API Service
 
+## 結構
+
+主要程式碼位於 ./app/ 內，主要有以下模組：
+
+- ./app/alembic/：資料庫 migration 設置與紀錄。
+- ./app/auth/：認證與授權之內部模組、函式。
+- ./app/models/：業務相關之資料模型集中處。
+- ./app/routers/：依資源分類之 API 路由，各資源路由下有數支對外 API 端點。
+- ./app/tests/：專案之單元測試。
+- ./app/db.py：資料庫物件、ORM 資料模型。
+- ./app/job.py：Job queue 物件。
+- ./app/logging.py：Logger 集中配置區。
+- ./app/main.py：FastAPI app 主程式。
+- ./app/settings.py：環境變數集中配置區。
+
+### 路由規劃
+
+路由集中於 ./app/routers/ 內，依資源分為下列路由：
+
+- Auth：註冊、驗證、登入、更新 token 等。
+- Me：登入用戶個人之 singleton 路由，目前主要是操作上傳檔案 files stat job。
+- File：用於檔案本身之上傳、下載等。
+- FCS file：專用於 FCS 處理，目前主要是建立 FCS info job。
+- System：系統面端點，目前負責回覆 health-check 查詢。
+
+
+### Job queue
+
+api-service 建立 job 時會在資料庫生成一筆紀錄，記下 job ID、用戶 ID、參數、狀態、結果等資訊，job-service 在處理 job 期間會更新資料庫之 job 紀錄。
+
+目前有以下 job：
+
+- Files stat job：統計單一用戶所有上傳檔案之數量與總大小。
+- FCS info job：讀取指定 FCS 檔案，取得部分資訊。
+
 
 ## 開發環境建置
 

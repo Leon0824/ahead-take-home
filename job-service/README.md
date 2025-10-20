@@ -1,5 +1,13 @@
 # Ahead Job Service
 
+## 結構
+
+api-service 建立 job 時會在資料庫生成一筆紀錄，記下 job ID、用戶 ID、參數、狀態、結果等資訊，job-service 在處理 job 期間會更新資料庫之 job 紀錄。
+
+主要程式碼位於 ./jobs/ 內，主要 job 處理函式在 ./jobs/main.py，目前有：
+
+- Files stat job：統計單一用戶所有上傳檔案之數量與總大小。
+- FCS info job：讀取指定 FCS 檔案，取得部分資訊。
 
 ## 開發環境建置
 
