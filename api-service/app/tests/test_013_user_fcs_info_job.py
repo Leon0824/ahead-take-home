@@ -10,7 +10,8 @@ import mimesis
 import pytest
 from sqlmodel import Session, select
 
-from app.db import JobStatusEnum, JobTypeEnum, UploadBatch, User
+from app.db import Job, JobStatusEnum, JobTypeEnum, UploadBatch, User
+from app.job import queue
 from app.models import FcsInfoJobRead, FilesStatJobRead, JobRead, Token, UploadBatchResult, UploadFileSetting
 from app.settings import get_settings
 
@@ -69,7 +70,7 @@ class TestUserFcsInfoJob:
         TestUserFcsInfoJob.file_s3_key = result.files[0].s3_key
 
         # Create job
-        # 這裡建立 job 後，下面 teardown 會立馬清除 DB 的 fcs_file 紀錄，所以在 worker 那邊，檔案計數和大小合計都會是 0。
+        # 這裡建立 job 後，下面 teardown 會立馬清除 DB 的 fcs_file 紀錄，所以在 worker 那邊會報找不到 DB 紀錄的錯誤。
         create_job_response = await TestUserFcsInfoJob.async_client.post(f'/fcs-files/fcs-info-jobs/create', params={'file_idno': TestUserFcsInfoJob.file_idno})
         assert create_job_response.status_code == HTTPStatus.CREATED
         TestUserFcsInfoJob.queue_job_id = UUID(create_job_response.json())
@@ -120,3 +121,11 @@ class TestUserFcsInfoJob:
         for f in batch.files: db_session.delete(f)
         db_session.delete(batch)
         db_session.commit()
+
+        # Delete job record in DB and queue
+        db_job = db_session.exec(select(Job).where(Job.queue_job_id == TestUserFcsInfoJob.queue_job_id)).one_or_none()
+        assert db_job
+        db_session.delete(db_job)
+        db_session.commit()
+
+        queue.remove(str(TestUserFcsInfoJob.queue_job_id))
