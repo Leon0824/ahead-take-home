@@ -1,1 +1,0 @@
-docker buildx build --file ./Containerfile --tag ahead-take-home:development .

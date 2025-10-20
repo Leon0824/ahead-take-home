@@ -1,0 +1,151 @@
+from datetime import datetime
+from enum import StrEnum
+from typing import Any
+from uuid import UUID
+
+from pydantic import AwareDatetime, BaseModel, ConfigDict
+from sqlmodel import JSON, TIMESTAMP, AutoString, Field, Relationship, SQLModel, Session, create_engine
+
+from jobs.settings import get_settings
+
+
+
+_SETTINGS = get_settings()
+
+
+
+class JobTypeEnum(StrEnum):
+    FILES_STAT = 'FILES_STAT'
+    FCS_INFO = 'FCS_INFO'
+
+
+
+class JobStatusEnum(StrEnum):
+    PENDING = 'PENDING'
+    RUNNING = 'RUNNING'
+    FINISHED = 'FINISHED'
+
+
+
+class Job(SQLModel, table=True):
+    __tablename__ = 'jobs'
+
+    id: int | None = Field(None, primary_key=True)
+    queue_job_id: UUID | None = Field(None, unique=True)
+    job_type: JobTypeEnum = Field(sa_type=AutoString)
+    job_args: dict[str, Any] | None = Field(None, sa_type=JSON)
+    status: JobStatusEnum = Field(JobStatusEnum.PENDING, sa_type=AutoString)
+    job_working_duration_second: float | None = None
+    result: dict[str, Any] | None = Field(None, sa_type=JSON)
+
+    user_id: int
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "queue_job_id": "9786d1be-ae6b-4902-b366-106d9e7aca70V",
+            'job_type': JobTypeEnum.FILES_STAT,
+            "job_args": {},
+            "job_working_duration_second": None,
+            "status": JobStatusEnum.PENDING,
+            "result": {},
+            "user_id": 1,
+        }],
+    })
+
+
+
+class UploadBatch(SQLModel, table=True):
+    __tablename__ = 'upload_batches'
+
+    id: int | None = Field(None, primary_key=True)
+    batch_idno: str = Field(unique=True)
+    upload_time: datetime = Field(sa_type=TIMESTAMP(True))
+
+    files: list['FcsFile'] = Relationship(
+        back_populates='upload_batch',
+        sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
+    )
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "batch_idno": "01K7PXGBTMV8R5M3TZTJ79PSMF",
+            'upload_time': "2025-10-16T18:00:00Z",
+            "files": [],
+        }],
+    })
+
+
+
+class FcsFile(SQLModel, table=True):
+    __tablename__ = 'fcs_files'
+
+    id: int | None = Field(None, primary_key=True)
+    file_idno: str = Field(unique=True)
+    file_name: str
+    file_size_byte: int
+    s3_key: str | None = Field(unique=True)
+    public: bool = True
+
+    user_id: int | None
+
+    upload_batch_id: int = Field(foreign_key='upload_batches.id')
+    upload_batch: UploadBatch = Relationship(back_populates='files')
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "file_idno": "01K7Q22M2BEXAD9XZGT3JZV58V",
+            'file_name': "abc.fcs",
+            "file_size_byte": 12345,
+            "s3_key": "01K7PXGBTMV8R5M3TZTJ79PSMF/abc.fcs",
+            "user_id": 1,
+            "upload_batch_id": 1,
+        }],
+    })
+
+
+
+class FilesStat(BaseModel):
+    files_count: int
+    files_size_byte_sum: int
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [{
+                "files_count": 2,
+                "files_size_byte_sum": 123,
+            }],
+        }
+    )
+
+
+
+class FcsInfo(BaseModel):
+    file_name: str
+    file_size_byte: int
+    file_upload_time: AwareDatetime
+    fcs_version: str
+    fcs_pnn_labels: list[str]
+    fcs_event_count: int
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [{
+                "file_name": "create_fcs_example.fcs",
+                "file_size_byte": 216432,
+                "file_upload_time": "2025-10-16T18:00:00Z",
+                "fcs_version": "2.0",
+                "fcs_pnn_labels": ['FSC-H', 'SSC-H', 'FL1-H', 'FL2-H', 'FL3-H', 'FL2-A', 'FL4-H', 'Time'],
+                "fcs_event_count": 13367,
+            }],
+        }
+    )
+
+
+
+engine = create_engine(
+    _SETTINGS.DATABASE_URL,
+    # echo='debug',
+)
