@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY_ID: str
     AWS_SECRET_ACCESS_KEY: SecretStr
     AWS_DEFAULT_REGION: str
+    AWS_S3_ENDPOINT_URL: HttpUrl
 
     _example: ClassVar[dict] = {
         'ENVIRONMENT_MODE': 'DEVELOPMENT',
@@ -29,6 +30,7 @@ class Settings(BaseSettings):
         'AWS_ACCESS_KEY_ID': 'AWSID',
         'AWS_SECRET_ACCESS_KEY': 'AWSSECRET',
         'AWS_DEFAULT_REGION': 'ap-northeast-1',
+        "AWS_S3_ENDPOINT_URL": 'https://s3.ap-northeast-1.amazonaws.com',
     }
     model_config = SettingsConfigDict(
         json_schema_extra={'examples': [_example]},

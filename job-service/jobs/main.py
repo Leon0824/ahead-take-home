@@ -84,7 +84,7 @@ def do_fcs_info(user_id: int, file_idno: str):
         s3_client = boto3.client(
             's3',
             region_name=_SETTINGS.AWS_DEFAULT_REGION,
-            endpoint_url='https://2d318ba7bbba6520730569a4819999c4.r2.cloudflarestorage.com',
+            endpoint_url=str(_SETTINGS.AWS_S3_ENDPOINT_URL),
             aws_access_key_id=_SETTINGS.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=_SETTINGS.AWS_SECRET_ACCESS_KEY.get_secret_value(),
         )
