@@ -27,7 +27,7 @@ PDM, version 2.26.0
 專案之依賴套件定義於 pyproject.toml 與 pdm.lock 檔案，PDM 會以 pdm.lock 內定義之套件與版次安裝依賴套件，用 PDM 建立虛擬環境與安裝套件之指令如下：
 
 ```shell
-$ cd ./protjects/ahead-take-home/job-service/
+$ cd ./projects/ahead-take-home/job-service/
 
 $ pdm install
 ```
