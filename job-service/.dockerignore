@@ -1,0 +1,16 @@
+*.log
+.env
+__pycache__
+coverage.xml
+.coverage
+
+.github
+.pytest_cache
+.ruff_cache
+.venv
+.vscode
+.cache
+
+doc/
+htmlcov/
+notebooks/
