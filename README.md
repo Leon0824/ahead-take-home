@@ -18,13 +18,12 @@
 
 服務間解耦，可獨立開發，獨立測試，主要服務開發環境建置與開發說明參見子專案內之 README 文件。
 
-整合測試在 compose 層級施作。
-
 ## 容器化運行
 
 1. 建構映像
 2. 配置環境變數
 3. 運行容器
+4. 整合測試
 
 ### 建構映像
 
@@ -50,4 +49,17 @@ $ docker compose up --detach
 ```shell
 $ cd ./projects/ahead-take-home/
 $ docker compose down
+```
+
+### 整合測試
+
+整合測試位於 compose 專案之 /tests/ 資料夾內。
+
+整合測試會自行啟動 compose，無需事先手動跑 compose。
+
+執行整合測試：
+
+```shell
+$ cd ./tests/
+$ pdm run pytest
 ```
