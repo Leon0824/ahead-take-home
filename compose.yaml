@@ -1,0 +1,184 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=ahead
+    volumes:
+      - ./postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ahead"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  traefik:
+    image: traefik:v3.5
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    ports:
+      # api-service
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP3 底層是走 UDP
+      # traefik-dashboard
+      - "8010:8010"
+      - "8011:8011"
+      - "8011:8011/udp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    logging:
+      driver: ${LOGGING_DRIVER}
+    command:
+      # API & Dashboard
+      - "--api=true"
+      - "--api.debug=true"
+      # Observability
+      - "--accesslog=true"
+      # Providers
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      # EntryPoints
+      - "--entrypoints.web1.address=:80" # api-service HTTP
+      - "--entryPoints.web1.forwardedHeaders.trustedIPs=172.18.0.0/15" # 172.18.0.1 - 172.19.255.254
+      - "--entrypoints.web1.http.sanitizePath=true"
+      - "--entrypoints.web1secure.address=:443" # api-service HTTPS
+      - "--entryPoints.web1secure.forwardedHeaders.trustedIPs=172.18.0.0/15"
+      - "--entrypoints.web1secure.http.sanitizePath=true"
+      - "--entrypoints.web1secure.http.tls=true"
+      - "--entrypoints.web1secure.http.tls.certresolver=le" # Optionally make 'le' the default resolver for TLS-enabled routers
+      - "--entrypoints.web1secure.http3=true"
+      
+      - "--entrypoints.web3.address=:8010" # traefik-dashboard HTTP
+      - "--entryPoints.web3.forwardedHeaders.trustedIPs=172.18.0.0/15"
+      - "--entrypoints.web3.http.sanitizePath=true"
+      - "--entrypoints.web3secure.address=:8011" # traefik-dashboard HTTPS
+      - "--entryPoints.web3secure.forwardedHeaders.trustedIPs=172.18.0.0/15"
+      - "--entrypoints.web3secure.http.sanitizePath=true"
+      - "--entrypoints.web3secure.http.tls=true"
+      - "--entrypoints.web3secure.http.tls.certresolver=le" # Optionally make 'le' the default resolver for TLS-enabled routers
+      - "--entrypoints.web3secure.http3=true"
+      # TLS Certificate Management (Let's Encrypt)
+      - "--certificatesresolvers.le.acme.email=leon0824@gmail.com"
+      - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json" # Path inside container volume
+      - "--certificatesresolvers.le.acme.tlsChallenge=true"
+    labels:
+      # Traefik API & dashboard
+      - "traefik.enable=true"
+      # Middleware
+      - "traefik.http.middlewares.auth.digestauth.users=admin:traefik:cabfc9be1da7aa5ba8a4a42caac213f4" # admin / adminpassword
+      # Router
+      - "traefik.http.routers.traefik-dashboard.entrypoints=web3"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`${SITE_ADDRESS}`)"
+      - "traefik.http.routers.traefik-dashboard.middlewares=auth"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+
+      - "traefik.http.routers.traefik-dashboard-secure.entrypoints=web3secure"
+      - "traefik.http.routers.traefik-dashboard-secure.rule=Host(`${SITE_ADDRESS}`)"
+      - "traefik.http.routers.traefik-dashboard-secure.middlewares=auth"
+      - "traefik.http.routers.traefik-dashboard-secure.service=api@internal"
+
+
+  api-service:
+    image: ahead-api-service:${API_SERVICE_IMAGE_TAG} # 變數來自 .env
+    restart: unless-stopped
+    volumes:
+      - ./logs/api-service:/code/logs
+    logging:
+      driver: ${LOGGING_DRIVER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    secrets:
+      - DATABASE_URL
+      - REDIS_URL
+      - ADMIN_EMAIL
+      - ADMIN_PASSWORD
+      - JWT_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_DEFAULT_REGION
+      - AWS_S3_ENDPOINT_URL
+    environment:
+      - ENVIRONMENT_MODE=${ENVIRONMENT_MODE}
+      - BASE_URL=${BASE_URL}
+      - ALLOW_ORIGINS=${ALLOW_ORIGINS}
+    labels:
+      - "traefik.enable=true"
+      # Service
+      - "traefik.http.services.api-service.loadbalancer.server.port=80"
+      - "traefik.http.services.api-service.loadbalancer.sticky.cookie=true"
+      - "traefik.http.services.api-service.loadbalancer.sticky.cookie.secure=true"
+      - "traefik.http.services.api-service.loadbalancer.sticky.cookie.httpOnly=true"
+      - "traefik.http.services.api-service.loadbalancer.healthCheck.path=/system/health"
+      # Router
+      - "traefik.http.routers.api-service.entrypoints=web1"
+      - "traefik.http.routers.api-service.rule=Host(`${SITE_ADDRESS}`)"
+
+      - "traefik.http.routers.api-service-secure.entrypoints=web1secure"
+      - "traefik.http.routers.api-service-secure.rule=Host(`${SITE_ADDRESS}`)"
+
+
+  job-service:
+    image: ahead-job-service:${JOB_SERVICE_IMAGE_TAG}
+    restart: unless-stopped
+    volumes:
+      - ./logs/job-service:/code/logs
+    logging:
+      driver: ${LOGGING_DRIVER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    secrets:
+      - DATABASE_URL
+      - REDIS_URL
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_DEFAULT_REGION
+      - AWS_S3_ENDPOINT_URL
+    environment:
+      - ENVIRONMENT_MODE=${ENVIRONMENT_MODE}
+
+
+secrets:
+  DATABASE_URL:
+    environment: DATABASE_URL
+  REDIS_URL:
+    environment: REDIS_URL
+  ADMIN_EMAIL:
+    environment: ADMIN_EMAIL
+  ADMIN_PASSWORD:
+    environment: ADMIN_PASSWORD
+  JWT_KEY:
+    environment: JWT_KEY
+  AWS_ACCESS_KEY_ID:
+    environment: AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY:
+    environment: AWS_SECRET_ACCESS_KEY
+  AWS_DEFAULT_REGION:
+    environment: AWS_DEFAULT_REGION
+  AWS_S3_ENDPOINT_URL:
+    environment: AWS_S3_ENDPOINT_URL

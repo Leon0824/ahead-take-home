@@ -15,7 +15,7 @@ worker = rq.SimpleWorker(
     connection=Redis.from_url(
         str(_SETTINGS.REDIS_URL),
         # decode_responses=True, # RQ 不支援
-        # protocol=3,
+        protocol=3,
     ),
 )
 

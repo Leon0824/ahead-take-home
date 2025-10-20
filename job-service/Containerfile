@@ -11,7 +11,7 @@ COPY ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 # Copy the ./app directory inside the /code directory.
-COPY ./jobs /code/app
+COPY ./jobs /code/jobs
 
 # Log 會輸出到 stdout 和 stderr 給 Docker，也會以檔案形式存在容器內，但會隨容器更新而消滅。
 COPY ./logs /code/logs
