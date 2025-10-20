@@ -1,9 +1,10 @@
+from datetime import datetime
 from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict
-from sqlmodel import JSON, AutoString, Field, SQLModel, Session, create_engine
+from sqlmodel import JSON, TIMESTAMP, AutoString, Field, Relationship, SQLModel, Session, create_engine
 
 from jobs.settings import get_settings
 
@@ -53,6 +54,30 @@ class Job(SQLModel, table=True):
     })
 
 
+
+class UploadBatch(SQLModel, table=True):
+    __tablename__ = 'upload_batches'
+
+    id: int | None = Field(None, primary_key=True)
+    batch_idno: str = Field(unique=True)
+    upload_time: datetime = Field(sa_type=TIMESTAMP(True))
+
+    files: list['FcsFile'] = Relationship(
+        back_populates='upload_batch',
+        sa_relationship_kwargs={'lazy': 'selectin'}, # 無效
+    )
+
+    model_config = ConfigDict(json_schema_extra={
+        'examples': [{
+            'id': 1,
+            "batch_idno": "01K7PXGBTMV8R5M3TZTJ79PSMF",
+            'upload_time': "2025-10-16T18:00:00Z",
+            "files": [],
+        }],
+    })
+
+
+
 class FcsFile(SQLModel, table=True):
     __tablename__ = 'fcs_files'
 
@@ -65,6 +90,9 @@ class FcsFile(SQLModel, table=True):
 
     user_id: int | None
 
+    upload_batch_id: int = Field(foreign_key='upload_batches.id')
+    upload_batch: UploadBatch = Relationship(back_populates='files')
+
     model_config = ConfigDict(json_schema_extra={
         'examples': [{
             'id': 1,
@@ -73,6 +101,7 @@ class FcsFile(SQLModel, table=True):
             "file_size_byte": 12345,
             "s3_key": "01K7PXGBTMV8R5M3TZTJ79PSMF/abc.fcs",
             "user_id": 1,
+            "upload_batch_id": 1,
         }],
     })
 
