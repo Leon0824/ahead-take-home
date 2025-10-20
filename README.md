@@ -5,8 +5,10 @@
 
 主要服務：
 
-- api-service：負責與前端通信。
-- job-service：負責跑 job queue。
+- api-service：負責對外提供 API 服務。
+- job-service：負責跑 job queue worker。
+
+各服務細節資訊參照子資料夾內之 README 文件。
 
 其他使用既有映像之服務：
 
@@ -53,7 +55,14 @@ $ docker compose down
 
 ### 整合測試
 
-整合測試位於 compose 專案之 /tests/ 資料夾內。
+整合測試位於 compose 專案之 ./tests/ 資料夾內。
+
+./test/ 主要由 pytest 腳本構成，首次測試前需要先建立環境與安裝依賴：
+
+```shell
+$ cd ./tests/
+$ pdm install
+```
 
 整合測試會自行啟動 compose，無需事先手動跑 compose。
 
