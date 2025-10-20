@@ -1,4 +1,4 @@
-# Ahead API Service
+# Ahead Job Service
 
 
 ## 開發環境建置
@@ -7,7 +7,6 @@
 2. 安裝專案依賴套件。
 3. 設置 .env 檔案。
 4. 運行開發環境。
-5. 異動資料庫 schema。
 
 ### 安裝虛擬環境和套件管理工具 PDM
 
@@ -28,7 +27,7 @@ PDM, version 2.26.0
 專案之依賴套件定義於 pyproject.toml 與 pdm.lock 檔案，PDM 會以 pdm.lock 內定義之套件與版次安裝依賴套件，用 PDM 建立虛擬環境與安裝套件之指令如下：
 
 ```shell
-$ cd ./protjects/ahead-take-home/api-service/
+$ cd ./protjects/ahead-take-home/job-service/
 
 $ pdm install
 ```
@@ -41,49 +40,15 @@ $ pdm install
 
 ### 運行開發環境
 
-運行開發環境之命令執行後之訊息節錄如下：
+運行開發環境之命令如下：
 
 ```shell
-$ pdm run fastapi dev
-
-FastAPI   Starting development server 🚀
-...
-server   Server started at http://127.0.0.1:8000
-server   Documentation at http://127.0.0.1:8000/docs
-...
-INFO   Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-...
-INFO   Application startup complete.
+$ pdm run python -m jobs
 ```
 
-前導命令 `pdm run` 表示令 PDM 在虛擬環境下執行命令，後面 `fastapi dev` 為運行開發環境之主要指令。
+前導命令 `pdm run` 表示令 PDM 在虛擬環境下執行命令，後面 `python -m jobs` 為運行開發環境之主要指令。
 
-根據訊息提示：
-
-- 開發環境網址為 http://127.0.0.1:8000
-- API 文件網址為 http://127.0.0.1:8000/docs
-- 按 CTRL+C 可終止程式。
-
-於 `fastapi dev` 模式下，專案資料夾內之檔案異動後 FastAPI 會自動重載，無需頻繁手動終止再運行。
-
-### 異動資料庫 schema
-
-1. 終止程式。
-2. 根據需求修改 app/db.py。
-3. 執行 `pdm run alembic revision -m 'MESSAGE' --autogenerate`，產生異動腳本。
-4. 去 app/alembic/versions/ 找到剛出生的異動腳本，檢查視需要修正。
-5. 執行 `pdm run alembic upgrade head` 去真正修改資料庫 schema。
-
-
-## 測試
-
-pytest 測試腳本位於 ./app/tests/，執行測試命令：
-
-```shell
-$ pdm run pytest
-```
-
-此命令會執行全部測試腳本，並輸出測試報告。
+執行後，worker 就會開始跑 job。
 
 
 ## 容器化運行
@@ -107,10 +72,10 @@ $ ./scripts/docker-build-development-image.sh
 $ docker images
 
 REPOSITORY          TAG           IMAGE ID       CREATED        SIZE
-ahead-api-service   development   674b6cdb2baf   1 hours ago   471MB
+ahead-job-service   development   674b6cdb2baf   1 hours ago   471MB
 ```
 
-應該會看到名為 ahead-api-service:development 之映像。
+應該會看到名為 ahead-job-service:development 之映像。
 
 ### 運行容器
 

@@ -17,5 +17,4 @@ COPY ./jobs /code/app
 COPY ./logs /code/logs
 
 # Set the **command** to use fastapi run, which uses Uvicorn underneath.
-# CMD ["rq", "worker", "default"]
 CMD ["python", "-m", "jobs"]
