@@ -53,6 +53,9 @@ $ cd ./projects/ahead-take-home/
 $ docker compose down
 ```
 
+打開 http://localhost/docs 即可見到本專案之 OpenAPI 文件。
+
+
 ### 整合測試
 
 整合測試位於 compose 專案之 ./tests/ 資料夾內。
