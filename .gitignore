@@ -1,2 +1,4 @@
 .env
 *.log
+.coverage
+coverage.xml
