@@ -15,7 +15,7 @@ _format = ''.join([
 
 
 
-def _opener(file: os.PathLike[str], flags: int):
+def _opener(file: str | os.PathLike[str], flags: int) -> int:
     return os.open(file, flags, 0o777)
 
 

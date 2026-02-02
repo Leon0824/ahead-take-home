@@ -11,6 +11,8 @@ readme = "README.md"
 [project.optional-dependencies]
 dev = [
     "ipykernel>=7.0.1",
+    "ruff>=0.14.14",
+    "ty>=0.0.14",
 ]
 [tool.pdm]
 distribution = false
@@ -32,3 +34,20 @@ addopts = """
 --cov-report=xml
 --no-cov-on-fail
 """
+
+
+[tool.ty.terminal]
+output-format = "concise"
+
+
+[tool.ruff]
+output-format = "grouped"
+
+
+[tool.ruff.lint]
+ignore = [
+    "E701", # Multiple statements on one line (colon)
+    # "F541", # Mf-string without any placeholders
+    "F401", # XXX imported but unused
+    # "E712", # Avoid equality comparisons to `True`
+]
