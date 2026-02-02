@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:1aded0ee08048e67e67b610edb6cbf30575874dbbb5f71b83be6ef26e8848386"
+content_hash = "sha256:24770cc9bf4909d47fb71d4526b4e46ccca44e19ef87d9333c808895d42833d6"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
@@ -566,13 +566,13 @@ files = [
 
 [[package]]
 name = "mimesis"
-version = "18.0.0"
-requires_python = "<4.0,>=3.10"
+version = "19.1.0"
+requires_python = ">=3.10"
 summary = "Mimesis: Fake Data Generator."
 groups = ["default"]
 files = [
-    {file = "mimesis-18.0.0-py3-none-any.whl", hash = "sha256:a51854a5ce63ebf2bd6a98e8841412e04cede38593be7e16d1d712848e6273df"},
-    {file = "mimesis-18.0.0.tar.gz", hash = "sha256:7d7c76ecd680ae48afe8dc4413ef1ef1ee7ef20e16f9f9cb42892add642fc1b2"},
+    {file = "mimesis-19.1.0-py3-none-any.whl", hash = "sha256:cf2ea4674819eaf386a2b8d28ded450968f1770fcb23f6c6ef884f61727bb4e6"},
+    {file = "mimesis-19.1.0.tar.gz", hash = "sha256:af4f14852a97657c5dbfad860be90c0efe97bf3758809e034b6581a45b13814b"},
 ]
 
 [[package]]
@@ -758,17 +758,17 @@ files = [
 
 [[package]]
 name = "pytest-docker"
-version = "3.2.3"
+version = "3.2.5"
 requires_python = ">=3.8"
 summary = "Simple pytest fixtures for Docker and Docker Compose based tests"
 groups = ["default"]
 dependencies = [
     "attrs>=19.2.0",
-    "pytest<9.0,>=4.0",
+    "pytest<10.0,>=4.0",
 ]
 files = [
-    {file = "pytest_docker-3.2.3-py3-none-any.whl", hash = "sha256:f973c35e6f2b674c8fc87e8b3354b02c15866a21994c0841a338c240a05de1eb"},
-    {file = "pytest_docker-3.2.3.tar.gz", hash = "sha256:26a1c711d99ef01e86e7c9c007f69641552c1554df4fccb065b35581cca24206"},
+    {file = "pytest_docker-3.2.5-py3-none-any.whl", hash = "sha256:79f3d209f928f45d4385cb825944861bc8a8cccd309804d9c9cd63bcef03edba"},
+    {file = "pytest_docker-3.2.5.tar.gz", hash = "sha256:c9662567522911280b394af4da2edd57facaf644494601fac962ff1e396d7ab6"},
 ]
 
 [[package]]

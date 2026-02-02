@@ -3,7 +3,7 @@ name = "tests"
 version = "0.1.0"
 description = "Default template for PDM package"
 authors = [{ name = "Leon" }]
-dependencies = ["pytest-cov>=7.0.0", "pytest-docker>=3.2.3", "mimesis>=18.0.0", "httpx>=0.28.1", "pytest-loguru>=0.4.0"]
+dependencies = ["pytest-cov>=7.0.0", "pytest-docker>=3.2.5", "mimesis>=19.1.0", "httpx>=0.28.1", "pytest-loguru>=0.4.0"]
 requires-python = ">=3.12"
 readme = "README.md"
 
