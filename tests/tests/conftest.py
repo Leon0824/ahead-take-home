@@ -1,7 +1,5 @@
 import pytest
 
-from tests.logging import logger
-
 
 
 @pytest.fixture(scope="session")
