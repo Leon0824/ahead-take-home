@@ -10,7 +10,7 @@ dependencies = [
     "httpx>=0.28.1",
     "pytest-loguru>=0.4.0",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 readme = "README.md"
 
 

@@ -12,7 +12,7 @@ dependencies = [
     "boto3>=1.43",
     "flowio>=1.4.0",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 readme = "README.md"
 
 
