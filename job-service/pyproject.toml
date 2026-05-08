@@ -4,12 +4,12 @@ version = "0.1.0"
 description = "Default template for PDM package"
 authors = [{ name = "Leon" }]
 dependencies = [
-    "rq>=2.7.0",
+    "rq>=2.8.0",
     "loguru>=0.7.3",
-    "pydantic-settings>=2.13",
-    "psycopg[binary]>=3.3.3",
-    "sqlmodel>=0.0.37",
-    "boto3>=1.42",
+    "pydantic-settings>=2.14",
+    "psycopg[binary]>=3.3.4",
+    "sqlmodel>=0.0.38",
+    "boto3>=1.43",
     "flowio>=1.4.0",
 ]
 requires-python = ">=3.12"
@@ -20,7 +20,7 @@ readme = "README.md"
 dev = [
     "ipykernel>=7.2",
     "pytest-cov>=7.1",
-    "boto3-stubs[s3]>=1.42",
+    "boto3-stubs[s3]>=1.43",
 ]
 [tool.pdm]
 distribution = false

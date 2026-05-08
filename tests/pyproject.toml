@@ -3,16 +3,22 @@ name = "tests"
 version = "0.1.0"
 description = "Default template for PDM package"
 authors = [{ name = "Leon" }]
-dependencies = ["pytest-cov>=7.0.0", "pytest-docker>=3.2.5", "mimesis>=19.1.0", "httpx>=0.28.1", "pytest-loguru>=0.4.0"]
+dependencies = [
+    "pytest-cov>=7.1.0",
+    "pytest-docker>=3.2.5",
+    "mimesis>=19.1.0",
+    "httpx>=0.28.1",
+    "pytest-loguru>=0.4.0",
+]
 requires-python = ">=3.12"
 readme = "README.md"
 
 
 [project.optional-dependencies]
 dev = [
-    "ipykernel>=7.0.1",
-    "ruff>=0.14.14",
-    "ty>=0.0.14",
+    "ipykernel>=7.2.0",
+    "ruff>=0.15.12",
+    "ty>=0.0.34",
 ]
 [tool.pdm]
 distribution = false
